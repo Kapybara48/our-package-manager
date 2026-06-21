@@ -2,7 +2,7 @@ package confighelper
 
 type PackageConfig struct {
 	URL            string
-	GitCloneDepth  string
+	GitCloneDepth  int
 	GitCloneBranch string
 	Makefile       string
 	MakefileTarget string
