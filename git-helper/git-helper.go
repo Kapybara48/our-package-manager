@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strconv"
+	"strings"
 )
 
 type GitRepository struct {
@@ -24,7 +25,7 @@ func (g *GitRepository) Clone() error {
 		args = append(args, "--branch", g.Branch)
 	}
 
-	cmd := exec.Command("git", "clone", g.URL, "/tmp/our-package-manager")
+	cmd := exec.Command("git", "clone", generateFolderName(g.URL), "/tmp/our-package-manager")
 	cmd.Args = append(cmd.Args, args...)
 
 	err := cmd.Run()
@@ -32,4 +33,13 @@ func (g *GitRepository) Clone() error {
 		return fmt.Errorf("error cloning git repository %s", err)
 	}
 	return nil
+}
+
+func generateFolderName(url string) string {
+	parts := strings.Split(url, "/")
+	repoName := strings.TrimSuffix(parts[len(parts)-1], ".git")
+	return "/tpm/" + repoName
+}
+
+func generateRandomString(length int) string {
 }
