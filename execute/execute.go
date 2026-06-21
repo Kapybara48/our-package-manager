@@ -7,43 +7,74 @@ import (
 	"os/exec"
 )
 
-func ExecuteWithOutput(command string, args ...string) (error, int) {
+func ExecuteGetOutput(command string, args ...string) (string, int, error) {
+	cmd := exec.Command(command, args...)
+	err := cmd.Start()
+	if err != nil {
+		return "", 0, err
+	}
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return "", 0, err
+	}
+
+	commandOutput := ""
+
+	scanner := bufio.NewScanner(stdout)
+	for scanner.Scan() {
+		m := scanner.Text()
+
+		err := scanner.Err()
+		if err != nil {
+			return "", 0, err
+		}
+
+		commandOutput = commandOutput + m
+	}
+
+	return commandOutput, cmd.ProcessState.ExitCode(), nil
+}
+
+func ExecuteWithOutput(command string, args ...string) (int, error) {
 	cmd := exec.Command(command, args...)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return nil, 0
+		return 0, err
 	}
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return nil, 0
+		return 0, err
 	}
 
 	stderrErr := make(chan error)
 	stdoutErr := make(chan error)
+
 	err = cmd.Start()
 	if err != nil {
-		return err, 0
+		return 0, err
 	}
 
 	go outputToStd(stderr, stderrErr)
 	go outputToStd(stdout, stdoutErr)
-
-	cmd.Wait()
+	err = cmd.Wait()
+	if err != nil {
+		return 0, nil
+	}
 
 	err = <-stderrErr
 	if err != nil {
-		return err, 0
+		return 0, err
 	}
 	err = <-stdoutErr
 	if err != nil {
-		return err, 0
+		return 0, err
 	}
-	return nil, cmd.ProcessState.ExitCode()
+
+	return cmd.ProcessState.ExitCode(), nil
 }
 
 func outputToStd(pipe io.ReadCloser, errorChannel chan error) {
-	defer pipe.Close()
-
 	scanner := bufio.NewScanner(pipe)
 	for scanner.Scan() {
 		m := scanner.Text()
@@ -53,6 +84,10 @@ func outputToStd(pipe io.ReadCloser, errorChannel chan error) {
 			errorChannel <- err
 			return
 		}
+	}
+	err := pipe.Close()
+	if err != nil {
+		errorChannel <- err
 	}
 	errorChannel <- nil
 }
