@@ -40,7 +40,7 @@ func (g *GitRepository) Clone() error {
 		args = append(args, "--branch", g.Branch)
 	}
 
-	cmd := exec.Command("git", "clone", g.URL, "/tmp/our-package-manager")
+	cmd := exec.Command("git", "clone", g.URL, g.Directory)
 	cmd.Args = append(cmd.Args, args...)
 
 	err := cmd.Run()
