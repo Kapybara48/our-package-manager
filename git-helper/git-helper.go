@@ -9,8 +9,8 @@ import (
 
 type GitRepository struct {
 	Directory string
-	Url string
-	Depth int
+	Url       string
+	Depth     int
 }
 
 func (*GitRepository) Clone(url string, destination string, depth int, branch string) error {
