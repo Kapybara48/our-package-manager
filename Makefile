@@ -5,4 +5,4 @@ build:
 
 install: build
 	@echo Installing builded package
-	cp bin/ssl-manager /usr/bin/our
+	cp ./bin/our /usr/bin/our
