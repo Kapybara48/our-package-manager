@@ -1,7 +1,8 @@
-package main
+package our_package_manager
 
 import (
 	"flag"
+	"our-package-manager/git"
 )
 
 func main() {
@@ -13,7 +14,7 @@ func main() {
 
 	//gitUrlFlag := flag.String("git-url", "", "link for git project")
 	flag.Parse()
-	err := Clone("https://github.com/Foxboron/sbctl.git", "/tmp/sbctl-git", 1, "master")
+	err := git.Clone("https://github.com/Foxboron/sbctl.git", "/tmp/sbctl-git", 1, "master")
 	if err != nil {
 		panic(err)
 	}
