@@ -1,5 +1,5 @@
 // Package git
-package git
+package githelper
 
 import (
 	"fmt"
@@ -8,13 +8,14 @@ import (
 )
 
 type GitRepository struct {
-	Directory string
-	Url       string
-	Depth     int
+	URL         string
+	Destination string
+	Depth       int
+	Branch      string
 }
 
-func (*GitRepository) Clone(url string, destination string, depth int, branch string) error {
-	cmd := exec.Command("git", "clone", "--depth", strconv.Itoa(depth), "--branch", branch, url, destination)
+func (g *GitRepository) Clone() error {
+	cmd := exec.Command("git", "clone", "--depth", strconv.Itoa(g.Depth), "--branch", g.Branch, g.URL, g.Destination)
 	err := cmd.Run()
 	if err != nil {
 		return fmt.Errorf("error cloning git repository %s", err)
