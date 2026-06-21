@@ -1,4 +1,4 @@
-package our_package_manager
+package main
 
 import (
 	"flag"
