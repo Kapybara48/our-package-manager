@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	"our-package-manager/git"
+
+	git "our-package-manager/git-helper"
 )
 
 func main() {
