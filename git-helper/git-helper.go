@@ -53,7 +53,7 @@ func (g *GitRepository) Clone() error {
 func generateFolderName(url string) string {
 	parts := strings.Split(url, "/")
 	repoName := strings.TrimSuffix(parts[len(parts)-1], ".git")
-	return "/tpm/" + repoName + generateRandomString(10)
+	return "/tmp/" + repoName + generateRandomString(10)
 }
 
 func generateRandomString(length int) string {
