@@ -5,7 +5,7 @@ import (
 	"our-package-manager/execute"
 )
 
-// Receives directory of the project and target like "build" or "install". 
+// Receives directory of the project and target like "build" or "install".
 func MakeTarget(directory string, target string) error {
 	err := execMake("-c", directory, target)
 	if err != nil {
@@ -15,11 +15,11 @@ func MakeTarget(directory string, target string) error {
 }
 
 func execMake(args ...string) error {
-	err, exitCode := execute.ExecuteWithOutput("make",args...)
+	exitCode, err := execute.ExecuteWithOutput("make", args...)
 	if err != nil {
 		return err
 	}
-	if exitCode != 0{
+	if exitCode != 0 {
 		return fmt.Errorf("exit code not 0 after running make")
 	}
 	return nil
