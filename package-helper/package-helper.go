@@ -9,7 +9,7 @@ import (
 )
 
 func Install(packageConfig *confighelper.PackageConfig) error {
-	git := githelper.GitRepository{URL: packageConfig.Url, Depth: 1}
+	git := githelper.NewGitRepository(packageConfig)
 	err := git.Clone()
 	if err != nil {
 		panic(err)
