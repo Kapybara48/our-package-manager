@@ -7,7 +7,13 @@ import (
 	"strconv"
 )
 
-func Clone(url string, destination string, depth int, branch string) error {
+type GitRepository struct {
+	Directory string
+	Url string
+	Depth int
+}
+
+func (*GitRepository) Clone(url string, destination string, depth int, branch string) error {
 	cmd := exec.Command("git", "clone", "--depth", strconv.Itoa(depth), "--branch", branch, url, destination)
 	err := cmd.Run()
 	if err != nil {
