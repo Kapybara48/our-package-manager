@@ -2,22 +2,35 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	githelper "our-package-manager/git-helper"
+	makehelper "our-package-manager/make-helper"
 )
 
 func main() {
-	//	nFlag := flag.Int("n", 1234, "help message for flag n")
-	//	flag.Parse()
-	//	if *nFlag == 1234 {
-	//		fmt.Println("n flag used")
-	//	}
+	installFlag := flag.String("install", "", "--install git url of package you want to install")
 
-	//gitUrlFlag := flag.String("git-url", "", "link for git project")
 	flag.Parse()
-	git := githelper.GitRepository{URL: "https://github.com/Foxboron/sbctl.git", Depth: 1, Branch: "master"}
+
+	if *installFlag != "" {
+		install(*installFlag)
+	}
+}
+
+func install(packageUrl string) error {
+	git := githelper.GitRepository{URL: packageUrl, Depth: 1}
 	err := git.Clone()
 	if err != nil {
 		panic(err)
 	}
+
+	err = makehelper.MakeTarget(git.Directory, "install")
+	if err != nil {
+		return err
+	}
+
+	log.Println("\"%s\" installed successfully", git.URL)
+
+	return nil
 }

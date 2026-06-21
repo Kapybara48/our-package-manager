@@ -6,8 +6,8 @@ import (
 )
 
 // Receives directory of the project and executes target like "build" or "install".
-func MakeTarget(directory string, target string) error {
-	err := execMake("-c", directory, target)
+func MakeTarget(directory string, makefile string, target string) error {
+	err := execMake("-c", directory, "-f", makefile, target)
 	if err != nil {
 		return err
 	}
