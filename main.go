@@ -2,10 +2,9 @@ package main
 
 import (
 	"flag"
-	"log"
 
-	githelper "our-package-manager/git-helper"
-	makehelper "our-package-manager/make-helper"
+	confighelper "our-package-manager/config-helper"
+	packagehelper "our-package-manager/package-helper"
 )
 
 func main() {
@@ -14,23 +13,16 @@ func main() {
 	flag.Parse()
 
 	if *installFlag != "" {
-		install(*installFlag)
+		//install(*installFlag)
+		packageConfig := confighelper.PackageConfig{
+			URL:            "https://github.com/Kapybara48/our-package-manager",
+			GitCloneDepth:  1,
+			GitCloneBranch: "main",
+			Makefile:       "Makefile",
+			MakefileTarget: "Install",
+			InstallScript:  "",
+		}
+
+		packagehelper.Install(&packageConfig)
 	}
-}
-
-func install(packageUrl string) error {
-	git := githelper.GitRepository{URL: packageUrl, Depth: 1}
-	err := git.Clone()
-	if err != nil {
-		panic(err)
-	}
-
-	err = makehelper.MakeTarget(git.Directory, "install")
-	if err != nil {
-		return err
-	}
-
-	log.Println("\"%s\" installed successfully", git.URL)
-
-	return nil
 }
