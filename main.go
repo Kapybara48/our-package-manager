@@ -15,7 +15,7 @@ func main() {
 	if *installFlag != "" {
 		//install(*installFlag)
 		packageConfig := confighelper.PackageConfig{
-			URL:            "https://github.com/Kapybara48/our-package-manager",
+			URL:            *installFlag,
 			GitCloneDepth:  1,
 			GitCloneBranch: "main",
 			Makefile:       "Makefile",

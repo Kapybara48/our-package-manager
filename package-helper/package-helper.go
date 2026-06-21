@@ -20,7 +20,7 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 		return err
 	}
 
-	log.Println("\"%s\" installed successfully", git.URL)
+	log.Printf("\"%s\" installed successfully\n", git.URL)
 
 	return nil
 }
