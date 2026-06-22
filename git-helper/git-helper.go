@@ -25,7 +25,7 @@ func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
 	git.URL = packageConfig.URL
 	git.Depth = packageConfig.GitCloneDepth
 	git.Branch = packageConfig.GitCloneBranch
-	git.Name = getRepositoryName(git.URL)
+	git.Name = GetRepositoryNameFromURL(git.URL)
 	git.Directory = generateFolderName(git.URL)
 
 	return &git
@@ -56,7 +56,7 @@ func generateFolderName(repositoryName string) string {
 	return "/tmp/" + repositoryName + "-" + generateRandomString(10)
 }
 
-func getRepositoryName(url string) string {
+func GetRepositoryNameFromURL(url string) string {
 	parts := strings.Split(url, "/")
 	repoName := strings.TrimSuffix(parts[len(parts)-1], ".git")
 	return repoName
