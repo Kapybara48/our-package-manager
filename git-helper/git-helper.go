@@ -4,6 +4,7 @@ package githelper
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 
@@ -66,12 +67,9 @@ func (g *GitRepository) SwitchBranch() error {
 }
 
 func (g *GitRepository) DeleteRepository() error {
-	exitCode, err := execute.ExecuteWithOutput(".", "rm", "-rf", g.Directory)
+	err := os.RemoveAll(g.Directory)
 	if err != nil {
-		return fmt.Errorf("error deleting git repository %s", err)
-	}
-	if exitCode != 0 {
-		return fmt.Errorf("deleting repository returned exit code %d", exitCode)
+		return fmt.Errorf("Error removing directory: %v", err)
 	}
 	return nil
 }
