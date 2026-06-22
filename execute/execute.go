@@ -9,6 +9,7 @@ import (
 
 func ExecuteGetOutput(workingDir string, command string, args ...string) (string, int, error) {
 	cmd := exec.Command(command, args...)
+	cmd.Dir = workingDir
 	err := cmd.Start()
 	if err != nil {
 		return "", 0, err
@@ -38,6 +39,8 @@ func ExecuteGetOutput(workingDir string, command string, args ...string) (string
 
 func ExecuteWithOutput(workingDir string, command string, args ...string) (int, error) {
 	cmd := exec.Command(command, args...)
+	cmd.Dir = workingDir
+
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return 0, err
