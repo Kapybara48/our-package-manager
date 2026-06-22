@@ -20,6 +20,7 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 		return err
 	}
 
+	defer git.DeleteRepository()
 	log.Printf("\"%s\" installed successfully\n", git.URL)
 
 	return nil

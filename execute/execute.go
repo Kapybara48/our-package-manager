@@ -60,6 +60,7 @@ func ExecuteWithOutput(workingDir string, command string, args ...string) (int, 
 
 	go outputToStd(stderr, stderrErr)
 	go outputToStd(stdout, stdoutErr)
+
 	err = cmd.Wait()
 	if err != nil {
 		return 0, nil
