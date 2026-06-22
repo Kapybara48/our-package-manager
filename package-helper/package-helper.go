@@ -12,7 +12,7 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 	git := githelper.NewGitRepository(*packageConfig)
 	err := git.Clone()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = makehelper.MakeTarget(git.Directory, packageConfig.Makefile, "install")
@@ -20,8 +20,8 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 		return err
 	}
 
-	defer git.DeleteRepository()
 	log.Printf("\"%s\" installed successfully\n", git.URL)
 
+	defer git.DeleteRepository()
 	return nil
 }
