@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	confighelper "our-package-manager/config-helper"
+	"our-package-manager/execute"
 )
 
 type GitRepository struct {
@@ -34,6 +35,8 @@ func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
 func (g *GitRepository) Clone() error {
 	var args []string
 
+	args = append(args, "clone", g.URL, g.Directory)
+
 	if g.Depth != 0 {
 		args = append(args, "--depth", strconv.Itoa(g.Depth))
 	}
@@ -42,12 +45,32 @@ func (g *GitRepository) Clone() error {
 		args = append(args, "--branch", g.Branch)
 	}
 
-	cmd := exec.Command("git", "clone", g.URL, g.Directory)
-	cmd.Args = append(cmd.Args, args...)
-
-	err := cmd.Run()
+	exitCode, err := execute.ExecuteWithOutput("git", args...)
 	if err != nil {
 		return fmt.Errorf("error cloning git repository %s", err)
+	}
+	if exitCode != 0 {
+		return fmt.Errorf("cloning repository returned exit code %d", exitCode)
+	}
+	return nil
+}
+
+func (g *GitRepository) SwitchBranch() error {
+	cmd := exec.Command("git", "switch", g.Branch)
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("error switching branch %s", err)
+	}
+	return nil
+}
+
+func (g *GitRepository) DeleteRepository() error {
+	exitCode, err := execute.ExecuteWithOutput("rm", "-rf", g.Directory)
+	if err != nil {
+		return fmt.Errorf("error deleting git repository %s", err)
+	}
+	if exitCode != 0 {
+		return fmt.Errorf("deleting repository returned exit code %d", exitCode)
 	}
 	return nil
 }
