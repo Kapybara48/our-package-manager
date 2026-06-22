@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-func ExecuteGetOutput(command string, args ...string) (string, int, error) {
+func ExecuteGetOutput(workingDir string, command string, args ...string) (string, int, error) {
 	cmd := exec.Command(command, args...)
 	err := cmd.Start()
 	if err != nil {
@@ -36,7 +36,7 @@ func ExecuteGetOutput(command string, args ...string) (string, int, error) {
 	return commandOutput, cmd.ProcessState.ExitCode(), nil
 }
 
-func ExecuteWithOutput(command string, args ...string) (int, error) {
+func ExecuteWithOutput(workingDir string, command string, args ...string) (int, error) {
 	cmd := exec.Command(command, args...)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

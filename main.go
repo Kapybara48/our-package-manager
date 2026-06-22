@@ -23,6 +23,9 @@ func main() {
 			InstallScript:  "",
 		}
 
-		packagehelper.Install(&packageConfig)
+		err := packagehelper.Install(&packageConfig)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
