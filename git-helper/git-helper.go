@@ -69,16 +69,24 @@ func (g *GitRepository) SwitchBranch() error {
 func (g *GitRepository) DeleteRepository() error {
 	err := os.RemoveAll(g.Directory)
 	if err != nil {
-		return fmt.Errorf("Error removing directory: %v", err)
+		return fmt.Errorf("error removing directory: %s", err)
 	}
 	return nil
 }
 
 func generateFolderName(repositoryName string) string {
-	return "/tmp/" + repositoryName + "-" + generateRandomString(10)
+	return os.TempDir() + repositoryName + "-" + generateRandomString(10)
 }
 
 func GetRepositoryNameFromURL(url string) string {
+	if url == "" || url == "." {
+		cwd, err := os.Getwd()
+		if err == nil {
+			return GetRepositoryNameFromURL(cwd)
+		}
+		return "local-repo"
+	}
+
 	parts := strings.Split(url, "/")
 	repoName := strings.TrimSuffix(parts[len(parts)-1], ".git")
 	return repoName
