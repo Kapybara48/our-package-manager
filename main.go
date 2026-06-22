@@ -22,7 +22,6 @@ func main() {
 			MakefileTarget: "Install",
 			InstallScript:  "",
 		}
-
 		err := packagehelper.Install(&packageConfig)
 		if err != nil {
 			panic(err)
