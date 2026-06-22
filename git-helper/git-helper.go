@@ -4,7 +4,6 @@ package githelper
 import (
 	"fmt"
 	"math/rand"
-	"os/exec"
 	"strconv"
 	"strings"
 
@@ -45,7 +44,7 @@ func (g *GitRepository) Clone() error {
 		args = append(args, "--branch", g.Branch)
 	}
 
-	exitCode, err := execute.ExecuteWithOutput("git", args...)
+	exitCode, err := execute.ExecuteWithOutput(".", "git", args...)
 	if err != nil {
 		return fmt.Errorf("error cloning git repository %s", err)
 	}
@@ -56,16 +55,18 @@ func (g *GitRepository) Clone() error {
 }
 
 func (g *GitRepository) SwitchBranch() error {
-	cmd := exec.Command("git", "switch", g.Branch)
-	err := cmd.Run()
+	exitCode, err := execute.ExecuteWithOutput(g.Directory, "git", "switch", g.Branch)
 	if err != nil {
 		return fmt.Errorf("error switching branch %s", err)
+	}
+	if exitCode != 0 {
+		return fmt.Errorf("switching branch returned exit code %d", exitCode)
 	}
 	return nil
 }
 
 func (g *GitRepository) DeleteRepository() error {
-	exitCode, err := execute.ExecuteWithOutput("rm", "-rf", g.Directory)
+	exitCode, err := execute.ExecuteWithOutput(".", "rm", "-rf", g.Directory)
 	if err != nil {
 		return fmt.Errorf("error deleting git repository %s", err)
 	}
