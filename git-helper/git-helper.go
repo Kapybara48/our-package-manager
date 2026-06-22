@@ -16,6 +16,7 @@ type GitRepository struct {
 	Depth     int
 	Branch    string
 	Directory string
+	Name      string
 }
 
 func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
@@ -24,6 +25,7 @@ func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
 	git.URL = packageConfig.URL
 	git.Depth = packageConfig.GitCloneDepth
 	git.Branch = packageConfig.GitCloneBranch
+	git.Name = getRepositoryName(git.URL)
 	git.Directory = generateFolderName(git.URL)
 
 	return &git
@@ -50,11 +52,11 @@ func (g *GitRepository) Clone() error {
 	return nil
 }
 
-func generateFolderName(url string) string {
-	return "/tmp/" + GetRepositoryName(url) + "-" + generateRandomString(10)
+func generateFolderName(repositoryName string) string {
+	return "/tmp/" + repositoryName + "-" + generateRandomString(10)
 }
 
-func GetRepositoryName(url string) string {
+func getRepositoryName(url string) string {
 	parts := strings.Split(url, "/")
 	repoName := strings.TrimSuffix(parts[len(parts)-1], ".git")
 	return repoName
