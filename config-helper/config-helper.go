@@ -7,6 +7,7 @@ import (
 )
 
 type AppConfig struct {
+	DefaultPackageConfig PackageConfig
 }
 
 type PackageConfig struct {
