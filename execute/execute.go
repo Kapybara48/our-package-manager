@@ -68,11 +68,11 @@ func ExecuteWithOutput(workingDir string, command string, args ...string) (int, 
 
 	err = <-stderrErr
 	if err != nil {
-		return 0, fmt.Errorf("Error while printing stdErr %s", err)
+		return 0, fmt.Errorf("error while printing stdErr %s", err)
 	}
 	err = <-stdoutErr
 	if err != nil {
-		return 0, fmt.Errorf("Error while printing stdOut %s", err)
+		return 0, fmt.Errorf("error while printing stdOut %s", err)
 	}
 
 	return cmd.ProcessState.ExitCode(), nil
