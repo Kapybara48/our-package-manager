@@ -89,9 +89,5 @@ func outputToStd(pipe io.ReadCloser, errorChannel chan error) {
 			return
 		}
 	}
-	err := pipe.Close()
-	if err != nil {
-		errorChannel <- err
-	}
 	errorChannel <- nil
 }
