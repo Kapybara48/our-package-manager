@@ -1,7 +1,6 @@
 package packagehelper
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 
@@ -22,8 +21,6 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 		return err
 	}
 
-	log.Printf("\"%s\" installed successfully\n", git.URL)
-
 	defer git.DeleteRepository()
 	return nil
 }
@@ -39,7 +36,6 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
 	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name+".toml")
 
-	log.Printf("gitRepo: \"%s\"", *gitRepo)
 	if fileExists(localPackageConfigPath) {
 		packageConfig, err := confighelper.ReadPackageConfig(localPackageConfigPath)
 		if err != nil {
@@ -54,10 +50,10 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 			return nil, err
 		}
 
-		//		err = packageConfig.SaveConfig()
-		//		if err != nil {
-		//			return nil, err
-		//		}
+		err = packageConfig.SaveConfig()
+		if err != nil {
+			return nil, err
+		}
 		return packageConfig, nil
 	}
 
@@ -68,6 +64,10 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 		GitCloneDepth:  1,
 		Makefile:       "Makefile",
 		MakefileTarget: "install",
+	}
+	err = packageConfig.SaveConfig()
+	if err != nil {
+		return nil, err
 	}
 
 	return &packageConfig, nil
