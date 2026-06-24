@@ -26,15 +26,8 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 }
 
 func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
-	gitRepo := githelper.NewGitRepositoryClone(url, 1)
-	err := gitRepo.Clone()
-	if err != nil {
-		return nil, err
-	}
-	defer gitRepo.DeleteRepository()
-
-	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
 	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name+".toml")
+	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
 
 	if fileExists(localPackageConfigPath) {
 		packageConfig, err := confighelper.ReadPackageConfig(localPackageConfigPath)
@@ -43,6 +36,13 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 		}
 		return packageConfig, nil
 	}
+
+	gitRepo := githelper.NewGitRepositoryClone(url, 1)
+	err := gitRepo.Clone()
+	if err != nil {
+		return nil, err
+	}
+	defer gitRepo.DeleteRepository()
 
 	if fileExists(remoteRepoConfigPath) {
 		packageConfig, err := confighelper.ReadPackageConfig(remoteRepoConfigPath)
