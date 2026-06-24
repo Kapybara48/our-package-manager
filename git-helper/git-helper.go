@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -31,6 +32,7 @@ func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
 
 	return &git
 }
+
 func NewGitRepositoryClone(url string, depth int) *GitRepository {
 	git := GitRepository{}
 	git.Name = GetRepositoryNameFromURL(git.URL)
@@ -84,7 +86,7 @@ func (g *GitRepository) DeleteRepository() error {
 }
 
 func generateFolderName(repositoryName string) string {
-	return os.TempDir() + repositoryName + "-" + generateRandomString(10)
+	return filepath.Join(os.TempDir(), repositoryName+"-"+generateRandomString(10))
 }
 
 func GetRepositoryNameFromURL(url string) string {
