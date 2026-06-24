@@ -37,7 +37,8 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 		return nil, err
 	}
 
-	fileExists(filepath.Join(gitRepo.Directory))
+	fileExists(filepath.Join(gitRepo.Directory, ""))
+	confighelper.GetPackageConfig()
 
 	return nil
 }
