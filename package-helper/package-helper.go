@@ -52,6 +52,10 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 		if err != nil {
 			return nil, err
 		}
+		err = packageConfig.SaveConfig()
+		if err != nil {
+			return nil, err
+		}
 		return packageConfig, nil
 	}
 
