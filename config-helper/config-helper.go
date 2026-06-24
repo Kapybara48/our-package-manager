@@ -27,7 +27,7 @@ func (p *PackageConfig) SaveConfig() error {
 	if err != nil {
 		return err
 	}
-	err = os.MkdirAll("/etc/our/packages/", 0644)
+	err = os.MkdirAll("/etc/our/packages/", 0755)
 	if err != nil && os.IsExist(err) {
 		return err
 	}
