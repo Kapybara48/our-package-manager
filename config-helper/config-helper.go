@@ -3,6 +3,7 @@ package confighelper
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 )
@@ -26,7 +27,7 @@ func (p *PackageConfig) SaveConfig() error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("file.toml", data, 0666)
+	err = os.WriteFile(filepath.Join("/etc/our/packages/", p.Name), data, 0644)
 	if err != nil {
 		return err
 	}
@@ -35,7 +36,7 @@ func (p *PackageConfig) SaveConfig() error {
 }
 
 func ReadPackageConfig(packageConfigPath string) (*PackageConfig, error) {
-	var packageConfig *PackageConfig
+	var packageConfig = &PackageConfig{}
 	data, err := os.ReadFile(packageConfigPath)
 	println(packageConfigPath)
 	fmt.Println(string(data))

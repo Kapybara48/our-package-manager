@@ -37,7 +37,7 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 	defer gitRepo.DeleteRepository()
 
 	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
-	localPackageConfigPath := filepath.Join("/etc/our/packages/", githelper.GetRepositoryNameFromURL(url))
+	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name)
 
 	if fileExists(localPackageConfigPath) {
 		packageConfig, err := confighelper.ReadPackageConfig(localPackageConfigPath)
@@ -52,11 +52,10 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = packageConfig.SaveConfig()
-		if err != nil {
-			panic(err)
-			return nil, err
-		}
+		//		err = packageConfig.SaveConfig()
+		//		if err != nil {
+		//			return nil, err
+		//		}
 		return packageConfig, nil
 	}
 
