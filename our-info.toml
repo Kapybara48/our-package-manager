@@ -1,7 +1,7 @@
 name = "our-package-manager"
 url = "https://github.com/Kapybara48/our-package-manager.git"
-git_clone_depth = 1
-git_clone_branch = "main"
+gitCloneDepth = 1
+gitCloneBranch = "main"
 makefile = "Makefile"
-makefile_target = "install"
-install_script = ""
+makefileTarget = "install"
+installScript = ""
