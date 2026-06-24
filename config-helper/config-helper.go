@@ -34,7 +34,7 @@ func (p *PackageConfig) SaveConfig() error {
 	return nil
 }
 
-func GetPackageConfig(packageConfigPath string) (*PackageConfig, error) {
+func ReadPackageConfig(packageConfigPath string) (*PackageConfig, error) {
 	var packageConfig *PackageConfig
 	data, err := os.ReadFile(packageConfigPath)
 	if err != nil {
