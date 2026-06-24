@@ -35,7 +35,7 @@ func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
 
 func NewGitRepositoryClone(url string, depth int) *GitRepository {
 	git := GitRepository{}
-	git.Name = GetRepositoryNameFromURL(git.URL)
+	git.Name = GetRepositoryNameFromURL(url)
 	git.Directory = generateFolderName(git.Name)
 	git.Depth = depth
 
