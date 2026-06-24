@@ -1,7 +1,11 @@
 package packagehelper
 
 import (
+	"errors"
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	confighelper "our-package-manager/config-helper"
 	githelper "our-package-manager/git-helper"
@@ -24,4 +28,21 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 
 	defer git.DeleteRepository()
 	return nil
+}
+
+func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
+	gitRepo := githelper.NewGitRepositoryClone(url)
+	err := gitRepo.Clone()
+	if err != nil {
+		return nil, err
+	}
+
+	fileExists(filepath.Join(gitRepo.Directory))
+
+	return nil
+}
+
+func fileExists(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return !os.IsNotExist(err)
 }

@@ -32,9 +32,9 @@ func (p *PackageConfig) SaveConfig() error {
 	return nil
 }
 
-func LoadPackageConfig() (*PackageConfig, error) {
+func GetPackageConfig(packageConfigPath string) (*PackageConfig, error) {
 	var packageConfig *PackageConfig
-	data, err := os.ReadFile("")
+	data, err := os.ReadFile(packageConfigPath)
 	if err != nil {
 		return nil, err
 	}

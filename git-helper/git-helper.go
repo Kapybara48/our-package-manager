@@ -31,6 +31,14 @@ func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
 
 	return &git
 }
+func NewGitRepositoryClone(url string) *GitRepository {
+	git := GitRepository{}
+	git.Name = GetRepositoryNameFromURL(git.URL)
+	git.Directory = generateFolderName(git.Name)
+
+	git.URL = url
+	return &git
+}
 
 func (g *GitRepository) Clone() error {
 	var args []string
