@@ -1,3 +1,4 @@
+[PackageConfig]
 name = "our-package-manager"
 url = "https://github.com/Kapybara48/our-package-manager.git"
 git_clone_depth = 1
