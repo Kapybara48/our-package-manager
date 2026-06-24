@@ -38,11 +38,10 @@ func (p *PackageConfig) SaveConfig() error {
 func ReadPackageConfig(packageConfigPath string) (*PackageConfig, error) {
 	var packageConfig = &PackageConfig{}
 	data, err := os.ReadFile(packageConfigPath)
-	println(packageConfigPath)
-	fmt.Println(string(data))
 	if err != nil {
 		return nil, fmt.Errorf("error reading package config file %s", err)
 	}
+
 	err = toml.Unmarshal(data, packageConfig)
 	if err != nil {
 		return nil, fmt.Errorf("error decoding package config file %s", err)
