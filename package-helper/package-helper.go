@@ -1,8 +1,6 @@
 package packagehelper
 
 import (
-	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,17 +29,44 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 }
 
 func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
-	gitRepo := githelper.NewGitRepositoryClone(url)
+	gitRepo := githelper.NewGitRepositoryClone(url, 1)
 	err := gitRepo.Clone()
 	if err != nil {
 		return nil, err
 	}
 
-	fileExists(filepath.Join(gitRepo.Directory, ""))
-	confighelper.GetPackageConfig()
+	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
+	localPackageConfigPath := filepath.Join("/etc/our/packages/", githelper.GetRepositoryNameFromURL(url))
 
-	return nil
+	if fileExists(localPackageConfigPath) {
+		packageConfig, err := confighelper.GetPackageConfig(localPackageConfigPath)
+		if err != nil {
+			return nil, err
+		}
+		return packageConfig, nil
+	}
+
+	if fileExists(remoteRepoConfigPath) {
+		packageConfig, err := confighelper.GetPackageConfig(remoteRepoConfigPath)
+		if err != nil {
+			return nil, err
+		}
+		return packageConfig, nil
+	}
+
+	//default
+	packageConfig := confighelper.PackageConfig{
+		Name:           gitRepo.Name,
+		URL:            url,
+		GitCloneDepth:  1,
+		Makefile:       "Makefile",
+		MakefileTarget: "install",
+	}
+
+	return &packageConfig, nil
 }
+
+func GetLocalPackageConfigPath(url string)
 
 func fileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
