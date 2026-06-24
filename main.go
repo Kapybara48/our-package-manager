@@ -8,8 +8,22 @@ import (
 
 func main() {
 	installFlag := flag.String("install", "", "--install git url of package you want to install")
+	selfUpdateFlag := flag.Bool("self-update", false, "Self updates our-package-manager")
 
 	flag.Parse()
+
+	if *selfUpdateFlag {
+		packageConfig, err := packagehelper.GetPackageConfig("https://github.com/Kapybara48/our-package-manager.git")
+		if err != nil {
+			panic(err)
+		}
+		err = packagehelper.Install(packageConfig)
+		if err != nil {
+			panic(err)
+		}
+
+		return
+	}
 
 	if *installFlag != "" {
 		//install(*installFlag)
@@ -29,5 +43,6 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		return
 	}
 }
