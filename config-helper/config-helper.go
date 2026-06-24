@@ -23,7 +23,6 @@ type PackageConfig struct {
 }
 
 func (p *PackageConfig) SaveConfig() error {
-	fmt.Println(*p)
 	data, err := toml.Marshal(p)
 	if err != nil {
 		return err
