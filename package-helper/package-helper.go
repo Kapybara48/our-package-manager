@@ -26,6 +26,7 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 }
 
 func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
+	gitRepo := githelper.NewGitRepositoryClone(url, 1)
 	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name+".toml")
 	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
 
@@ -37,7 +38,7 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 		return packageConfig, nil
 	}
 
-	gitRepo := githelper.NewGitRepositoryClone(url, 1)
+	// remote config loading
 	err := gitRepo.Clone()
 	if err != nil {
 		return nil, err
