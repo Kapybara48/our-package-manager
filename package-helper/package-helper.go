@@ -39,6 +39,7 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
 	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name+".toml")
 
+	log.Printf("gitRepo: \"%s\"", *gitRepo)
 	if fileExists(localPackageConfigPath) {
 		packageConfig, err := confighelper.ReadPackageConfig(localPackageConfigPath)
 		if err != nil {
