@@ -27,6 +27,10 @@ func (p *PackageConfig) SaveConfig() error {
 	if err != nil {
 		return err
 	}
+	err = os.MkdirAll("/etc/our/packages/", 0644)
+	if err != nil && os.IsExist(err) {
+		return err
+	}
 	err = os.WriteFile(filepath.Join("/etc/our/packages/", p.Name+".toml"), data, 0644)
 	if err != nil {
 		return err
