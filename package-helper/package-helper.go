@@ -66,8 +66,6 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 	return &packageConfig, nil
 }
 
-func GetLocalPackageConfigPath(url string)
-
 func fileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	return !os.IsNotExist(err)
