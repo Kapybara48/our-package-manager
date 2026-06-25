@@ -67,7 +67,7 @@ func main() {
 	}
 
 	if *removeFlag != "" {
-		packageConfig, err := packagehelper.GetPackageConfig(*installFlag)
+		packageConfig, err := packagehelper.GetPackageConfig(*removeFlag)
 		if err != nil {
 			panic(err)
 		}
