@@ -25,6 +25,29 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 	return nil
 }
 
+func Uninstall(packageConfig *confighelper.PackageConfig) error {
+	gitRepo := githelper.NewGitRepository(*packageConfig)
+
+	err := gitRepo.Clone()
+	if err != nil {
+		return err
+	}
+
+	err = makehelper.MakeTarget(gitRepo.Directory, packageConfig.Makefile, packageConfig.MakeUninstallTarget)
+	if err != nil {
+		return err
+	}
+
+	err = os.Remove(filepath.Join("/etc/our/packages/", packageConfig.Name+".toml"))
+	if err != nil {
+		return err
+	}
+
+	defer gitRepo.DeleteRepository()
+	return nil
+
+}
+
 func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 	gitRepo := githelper.NewGitRepositoryClone(url, 1)
 	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name+".toml")
@@ -60,11 +83,11 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 
 	//default
 	packageConfig := confighelper.PackageConfig{
-		Name:           gitRepo.Name,
-		URL:            url,
-		GitCloneDepth:  1,
-		Makefile:       "Makefile",
-		MakefileTarget: "install",
+		Name:              gitRepo.Name,
+		URL:               url,
+		GitCloneDepth:     1,
+		Makefile:          "Makefile",
+		MakeInstallTarget: "install",
 	}
 	err = packageConfig.SaveConfig()
 	if err != nil {
