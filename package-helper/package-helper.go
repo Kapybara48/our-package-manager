@@ -83,11 +83,12 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 
 	//default
 	packageConfig := confighelper.PackageConfig{
-		Name:              gitRepo.Name,
-		URL:               url,
-		GitCloneDepth:     1,
-		Makefile:          "Makefile",
-		MakeInstallTarget: "install",
+		Name:                gitRepo.Name,
+		URL:                 url,
+		GitCloneDepth:       1,
+		Makefile:            "Makefile",
+		MakeInstallTarget:   "install",
+		MakeUninstallTarget: "uninstall",
 	}
 	err = packageConfig.SaveConfig()
 	if err != nil {
