@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -10,12 +11,14 @@ import (
 )
 
 func main() {
-	installFlag := flag.String("install", "", "--install git url of package you want to install")
-	updateFlag := flag.Bool("update", false, "Updates all installed packages")
+	installFlag := flag.String("install", "", "git url of package you want to install")
+	updateFlag := flag.Bool("update", false, "updates all installed packages")
+	listFlag := flag.Bool("list", false, "lists installed packages")
+	removeFlag := flag.String("remove", "", "uninstalls package and removes package config")
 
 	flag.Parse()
 
-	if *updateFlag {
+	if *updateFlag || *listFlag {
 		packageConfigFiles, err := os.ReadDir("/etc/our/packages/")
 		if err != nil {
 			panic(err)
@@ -27,9 +30,16 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = packagehelper.Install(packageConfig)
-			if err != nil {
-				panic(err)
+
+			if *updateFlag {
+				err = packagehelper.Install(packageConfig)
+				if err != nil {
+					panic(err)
+				}
+			}
+
+			if *listFlag {
+				fmt.Printf("%s: \"%s\"\n", packageConfig.Name, packageConfig.URL)
 			}
 		}
 		return
@@ -54,5 +64,17 @@ func main() {
 			panic(err)
 		}
 		return
+	}
+
+	if *removeFlag != "" {
+		packageConfig, err := packagehelper.GetPackageConfig(*installFlag)
+		if err != nil {
+			panic(err)
+		}
+		err = packagehelper.Uninstall(packageConfig)
+		if err != nil {
+			panic(err)
+		}
+
 	}
 }

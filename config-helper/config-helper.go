@@ -13,13 +13,15 @@ type AppConfig struct {
 }
 
 type PackageConfig struct {
-	Name           string
-	URL            string
-	GitCloneDepth  int
-	GitCloneBranch string
-	Makefile       string
-	MakefileTarget string
-	InstallScript  string
+	Name                string
+	URL                 string
+	GitCloneDepth       int
+	GitCloneBranch      string
+	Makefile            string
+	MakeInstallTarget   string
+	MakeUninstallTarget string
+	InstallScript       string
+	UninstallScript     string
 }
 
 func (p *PackageConfig) SaveConfig() error {
