@@ -3,5 +3,6 @@ URL = "https://github.com/Kapybara48/our-package-manager.git"
 GitCloneDepth = 1
 GitCloneBranch = "main"
 Makefile = "Makefile"
-MakefileTarget = "install"
+MakeInstallTarget = "install"
+MakeUninstallTarget = "uninstall"
 InstallScript = ""
