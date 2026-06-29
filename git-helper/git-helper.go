@@ -62,6 +62,17 @@ func (g *GitRepository) SwitchBranch(branch string) error {
 	return nil
 }
 
+func (g *GitRepository) FetchTags() error {
+	exitCode, err := execute.ExecuteWithOutput(g.Directory, "git", "fetch", "--tags")
+	if err != nil {
+		return fmt.Errorf("error fetching tags %s", err)
+	}
+	if exitCode != 0 {
+		return fmt.Errorf("fetching tags returned exit code %d", exitCode)
+	}
+	return nil
+}
+
 func (g *GitRepository) DeleteLocalClone() error {
 	err := os.RemoveAll(g.Directory)
 	if err != nil {
