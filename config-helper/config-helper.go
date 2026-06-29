@@ -15,8 +15,8 @@ type AppConfig struct {
 type PackageConfig struct {
 	Name                string
 	URL                 string
-	GitCloneDepth       int
-	GitCloneBranch      string
+	GitDepth            int
+	GitBranch           string
 	Makefile            string
 	MakeInstallTarget   string
 	MakeUninstallTarget string
