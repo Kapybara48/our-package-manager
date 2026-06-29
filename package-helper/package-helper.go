@@ -10,8 +10,8 @@ import (
 )
 
 func Install(packageConfig *confighelper.PackageConfig) error {
-	git := githelper.NewGitRepository(*packageConfig)
-	err := git.Clone()
+	git := githelper.NewGitRepository(packageConfig.URL)
+	err := git.Clone(packageConfig.GitDepth, packageConfig.GitBranch)
 	if err != nil {
 		return err
 	}
@@ -21,14 +21,14 @@ func Install(packageConfig *confighelper.PackageConfig) error {
 		return err
 	}
 
-	defer git.DeleteRepository()
+	defer git.DeleteLocalClone()
 	return nil
 }
 
 func Uninstall(packageConfig *confighelper.PackageConfig) error {
-	gitRepo := githelper.NewGitRepository(*packageConfig)
+	gitRepo := githelper.NewGitRepository(packageConfig.URL)
 
-	err := gitRepo.Clone()
+	err := gitRepo.Clone(packageConfig.GitDepth, packageConfig.GitBranch)
 	if err != nil {
 		return err
 	}
@@ -43,14 +43,15 @@ func Uninstall(packageConfig *confighelper.PackageConfig) error {
 		return err
 	}
 
-	defer gitRepo.DeleteRepository()
+	defer gitRepo.DeleteLocalClone()
 	return nil
 
 }
 
 func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
-	gitRepo := githelper.NewGitRepositoryClone(url, 1)
-	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.Name+".toml")
+	gitRepo := githelper.NewGitRepository(url)
+
+	localPackageConfigPath := filepath.Join("/etc/our/packages/", gitRepo.GetName()+".toml")
 	remoteRepoConfigPath := filepath.Join(gitRepo.Directory, "our-info.toml")
 
 	if fileExists(localPackageConfigPath) {
@@ -62,11 +63,11 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 	}
 
 	// remote config loading
-	err := gitRepo.Clone()
+	err := gitRepo.Clone(1, "")
 	if err != nil {
 		return nil, err
 	}
-	defer gitRepo.DeleteRepository()
+	defer gitRepo.DeleteLocalClone()
 
 	if fileExists(remoteRepoConfigPath) {
 		packageConfig, err := confighelper.ReadPackageConfig(remoteRepoConfigPath)
@@ -83,9 +84,9 @@ func GetPackageConfig(url string) (*confighelper.PackageConfig, error) {
 
 	//default
 	packageConfig := confighelper.PackageConfig{
-		Name:                gitRepo.Name,
+		Name:                gitRepo.GetName(),
 		URL:                 url,
-		GitCloneDepth:       1,
+		GitDepth:            1,
 		Makefile:            "Makefile",
 		MakeInstallTarget:   "install",
 		MakeUninstallTarget: "uninstall",

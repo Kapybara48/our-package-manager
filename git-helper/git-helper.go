@@ -9,51 +9,35 @@ import (
 	"strconv"
 	"strings"
 
-	confighelper "our-package-manager/config-helper"
 	"our-package-manager/execute"
 )
 
 type GitRepository struct {
 	URL       string
-	Depth     int
-	Branch    string
-	Directory string
-	Name      string
+	Directory string // if Directory is empty, it means, the repo was not cloned yet
 }
 
-func NewGitRepository(packageConfig confighelper.PackageConfig) *GitRepository {
+func NewGitRepository(url string) *GitRepository {
 	git := GitRepository{}
-
-	git.URL = packageConfig.URL
-	git.Depth = packageConfig.GitCloneDepth
-	git.Branch = packageConfig.GitCloneBranch
-	git.Name = GetRepositoryNameFromURL(git.URL)
-	git.Directory = generateFolderName(git.Name)
-
-	return &git
-}
-
-func NewGitRepositoryClone(url string, depth int) *GitRepository {
-	git := GitRepository{}
-	git.Name = GetRepositoryNameFromURL(url)
-	git.Directory = generateFolderName(git.Name)
-	git.Depth = depth
 
 	git.URL = url
+	name := git.GetName()
+	git.Directory = generateFolderName(name)
+
 	return &git
 }
 
-func (g *GitRepository) Clone() error {
+func (g *GitRepository) Clone(depth int, branch string) error {
 	var args []string
 
 	args = append(args, "clone", g.URL, g.Directory)
 
-	if g.Depth != 0 {
-		args = append(args, "--depth", strconv.Itoa(g.Depth))
+	if depth != 0 {
+		args = append(args, "--depth", strconv.Itoa(depth))
 	}
 
-	if g.Branch != "" {
-		args = append(args, "--branch", g.Branch)
+	if branch != "" {
+		args = append(args, "--branch", branch)
 	}
 
 	exitCode, err := execute.ExecuteWithOutput(".", "git", args...)
@@ -63,11 +47,12 @@ func (g *GitRepository) Clone() error {
 	if exitCode != 0 {
 		return fmt.Errorf("cloning repository returned exit code %d", exitCode)
 	}
+
 	return nil
 }
 
-func (g *GitRepository) SwitchBranch() error {
-	exitCode, err := execute.ExecuteWithOutput(g.Directory, "git", "switch", g.Branch)
+func (g *GitRepository) SwitchBranch(branch string) error {
+	exitCode, err := execute.ExecuteWithOutput(g.Directory, "git", "switch", branch)
 	if err != nil {
 		return fmt.Errorf("error switching branch %s", err)
 	}
@@ -77,30 +62,34 @@ func (g *GitRepository) SwitchBranch() error {
 	return nil
 }
 
-func (g *GitRepository) DeleteRepository() error {
+func (g *GitRepository) DeleteLocalClone() error {
 	err := os.RemoveAll(g.Directory)
 	if err != nil {
-		return fmt.Errorf("error removing directory: %s", err)
+		return fmt.Errorf("error removing git directory: %s", err)
 	}
+
+	g.Directory = ""
+
 	return nil
 }
 
-func generateFolderName(repositoryName string) string {
-	return filepath.Join(os.TempDir(), repositoryName+"-"+generateRandomString(10))
-}
-
-func GetRepositoryNameFromURL(url string) string {
-	if url == "" || url == "." {
+func (g *GitRepository) GetName() string {
+	if g.URL == "" || g.URL == "." {
 		cwd, err := os.Getwd()
 		if err == nil {
-			return GetRepositoryNameFromURL(cwd)
+			g.URL = cwd
+			return g.GetName()
 		}
 		return "local-repo"
 	}
 
-	parts := strings.Split(url, "/")
+	parts := strings.Split(g.URL, "/")
 	repoName := strings.TrimSuffix(parts[len(parts)-1], ".git")
 	return repoName
+}
+
+func generateFolderName(repositoryName string) string {
+	return filepath.Join(os.TempDir(), repositoryName+"-"+generateRandomString(10))
 }
 
 func generateRandomString(length int) string {
