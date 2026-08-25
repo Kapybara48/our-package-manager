@@ -1,8 +1,0 @@
-Name = "our-package-manager"
-URL = "https://github.com/Kapybara48/our-package-manager.git"
-GitCloneDepth = 1
-GitCloneBranch = "main"
-Makefile = "Makefile"
-MakeInstallTarget = "install"
-MakeUninstallTarget = "uninstall"
-InstallScript = ""
