@@ -1,5 +1,5 @@
-mod cli;
+mod argparser;
 
 fn main() {
-    cli::print_args();
+    argparser::print_args();
 }
