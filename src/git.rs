@@ -1,11 +1,11 @@
-use std::process::Command;
+use std::process::{Command, ExitStatus};
 
-pub fn clone(url: &str) {
+pub fn clone(url: &str) -> Result<ExitStatus, std::io::Error> {
     match Command::new("git").args(["clone", url]).spawn() {
         Ok(mut child) => match child.wait() {
-            Ok(exit_status) => println!("Exit status: {}", exit_status),
-            Err(error) => println!("{}", error),
+            Ok(exit_status) => Ok(exit_status),
+            Err(error) => Err(error),
         },
-        Err(error) => println!("{}", error),
+        Err(error) => Err(error),
     }
 }

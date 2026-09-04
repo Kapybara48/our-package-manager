@@ -28,5 +28,14 @@ fn main() {
 
 fn install(url: &str) {
     println!("installing {}", url);
-    git::clone(url);
+    match git::clone(url) {
+        Ok(exit_status) => {
+            if exit_status.success() {
+                println!("successfully cloned");
+            } else {
+                println!("cloning was not successfull");
+            }
+        }
+        Err(error) => println!("{}", error),
+    }
 }
