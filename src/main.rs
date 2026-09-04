@@ -3,16 +3,13 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command()]
 struct Args {
-    #[arg(short)]
-    name: String,
-
     #[command(subcommand)]
     command: Commands,
 }
 
 #[derive(Subcommand)]
 enum Commands {
-    Install,
+    Install { url: String },
     Remove,
     Update,
 }
@@ -20,7 +17,11 @@ enum Commands {
 fn main() {
     let args = Args::parse();
 
-    println!("{}", args.name);
+    match args.command {
+        Commands::Install { url } => println!("installing {}", url),
+        Commands::Remove => println!("removing"),
+        Commands::Update => println!("updating"),
+    }
 }
 
 fn main_copy() {
