@@ -24,6 +24,6 @@ fn main() {
     }
 }
 
-fn install(url: &String) {
+fn install(url: &str) {
     println!("installing {}", url);
 }
