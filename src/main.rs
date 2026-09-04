@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 
+mod git;
+
 #[derive(Parser)]
 #[command()]
 struct Args {
@@ -26,4 +28,5 @@ fn main() {
 
 fn install(url: &str) {
     println!("installing {}", url);
+    git::clone(url);
 }
