@@ -1,17 +1,12 @@
-use crate::paths;
+use crate::{error::OurError, paths::get_our_dir};
 use std::process::{Command, ExitStatus};
 
-pub fn clone(url: &str) -> Result<ExitStatus, std::io::Error> {
-    match Command::new("git")
+pub fn clone(url: &str) -> Result<ExitStatus, OurError> {
+    Ok(Command::new("git")
         .args(["clone", url, get_name_from_url(url)])
-        .spawn()
-    {
-        Ok(mut child) => match child.wait() {
-            Ok(exit_status) => Ok(exit_status),
-            Err(error) => Err(error),
-        },
-        Err(error) => Err(error),
-    }
+        .current_dir(get_our_dir()?)
+        .spawn()?
+        .wait()?)
 }
 
 fn get_name_from_url(url: &str) -> &str {
