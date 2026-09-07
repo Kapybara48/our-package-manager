@@ -1,6 +1,9 @@
 use clap::{Parser, Subcommand};
 
+mod build;
+mod error;
 mod git;
+mod paths;
 
 #[derive(Parser)]
 #[command()]
