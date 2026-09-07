@@ -1,3 +1,4 @@
+use crate::paths;
 use std::process::{Command, ExitStatus};
 
 pub fn clone(url: &str) -> Result<ExitStatus, std::io::Error> {
