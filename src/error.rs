@@ -1,0 +1,3 @@
+pub enum OurError {
+    MissingHomeEnv,
+}
