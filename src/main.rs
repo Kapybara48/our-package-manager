@@ -23,22 +23,35 @@ fn main() {
     let args = Args::parse();
 
     match args.command {
-        Commands::Install { url } => install(&url),
+        Commands::Install { url } => match install(&url) {
+            Ok(()) => println!("successfully installed"),
+            Err(error) => println!("{}", error),
+        },
         Commands::Remove => println!("removing"),
         Commands::Update => println!("updating"),
     }
 }
 
-fn install(url: &str) {
+fn install(url: &str) -> Result<(), error::OurError> {
     println!("installing {}", url);
-    match git::clone(url) {
-        Ok(exit_status) => {
-            if exit_status.success() {
-                println!("successfully cloned");
-            } else {
-                println!("cloning was not successfull");
-            }
-        }
-        Err(error) => println!("{}", error),
+
+    let (status, package_dir) = git::clone(url)?;
+
+    if !status.success() {
+        println!("failed to clone");
+        return Ok(());
     }
+
+    println!("successfully cloned");
+
+    let status = build::build(package_dir)?;
+
+    if !status.success() {
+        println!("failed to build");
+        return Ok(());
+    }
+
+    println!("successfully built");
+
+    Ok(())
 }
