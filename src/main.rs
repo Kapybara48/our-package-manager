@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 
 mod build;
+mod cargo;
 mod error;
 mod git;
 mod paths;
