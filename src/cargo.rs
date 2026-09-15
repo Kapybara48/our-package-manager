@@ -2,6 +2,7 @@ use serde::Deserialize;
 use std::path::{Path, PathBuf};
 
 use crate::error::OurError;
+use crate::paths;
 
 #[derive(Deserialize)]
 struct Config {
@@ -31,4 +32,14 @@ pub fn get_binary_path(package_dir: &Path) -> Result<PathBuf, OurError> {
     binary_path.push(package_name);
 
     Ok(binary_path)
+}
+
+pub fn install_binary(package_dir: &Path) -> Result<PathBuf, OurError> {
+    let binary_path = get_binary_path(package_dir)?;
+    let mut result_bin_path = paths::get_bin_dir()?;
+    result_bin_path.push(binary_path.file_name().unwrap());
+
+    std::fs::copy(binary_path, &result_bin_path)?;
+
+    Ok(result_bin_path)
 }

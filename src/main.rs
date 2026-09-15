@@ -45,7 +45,7 @@ fn install(url: &str) -> Result<(), error::OurError> {
 
     println!("successfully cloned");
 
-    let status = build::build(package_dir)?;
+    let status = build::build(&package_dir)?;
 
     if !status.success() {
         println!("failed to build");
@@ -53,6 +53,8 @@ fn install(url: &str) -> Result<(), error::OurError> {
     }
 
     println!("successfully built");
+
+    cargo::install_binary(&package_dir)?;
 
     Ok(())
 }
