@@ -15,6 +15,7 @@ type AppConfig struct {
 type PackageConfig struct {
 	Name                string
 	URL                 string
+	SubFolder           string
 	GitDepth            int
 	GitBranch           string
 	Makefile            string

@@ -39,7 +39,7 @@ func main() {
 			}
 
 			if *listFlag {
-				fmt.Printf("%s: \"%s\"\n", packageConfig.Name, packageConfig.URL)
+				fmt.Printf("%s: \"%s\" - \"%s\"\n", packageConfig.Name, packageConfig.URL, packageConfig.SubFolder)
 			}
 		}
 		return

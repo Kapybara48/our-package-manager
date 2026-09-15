@@ -10,18 +10,19 @@ import (
 )
 
 func Install(packageConfig *confighelper.PackageConfig) error {
-	git := githelper.NewGitRepository(packageConfig.URL)
-	err := git.Clone(packageConfig.GitDepth, packageConfig.GitBranch)
+	gitRepo := githelper.NewGitRepository(packageConfig.URL)
+	err := gitRepo.Clone(packageConfig.GitDepth, packageConfig.GitBranch)
 	if err != nil {
 		return err
 	}
 
-	err = makehelper.MakeTarget(git.Directory, packageConfig.Makefile, "install")
+	err = makehelper.MakeTarget(filepath.Join(gitRepo.Directory, packageConfig.SubFolder), packageConfig.Makefile, "install")
+
 	if err != nil {
 		return err
 	}
 
-	defer git.DeleteLocalClone()
+	defer gitRepo.DeleteLocalClone()
 	return nil
 }
 
