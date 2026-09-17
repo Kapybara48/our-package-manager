@@ -2,9 +2,9 @@ use clap::{Parser, Subcommand};
 
 mod build;
 mod cargo;
-mod config;
 mod error;
 mod git;
+mod package_config;
 mod paths;
 
 #[derive(Parser)]
