@@ -1,10 +1,7 @@
 use crate::{error::OurError, paths::get_our_dir};
-use std::{
-    path::PathBuf,
-    process::{Command, ExitStatus},
-};
+use std::{path::PathBuf, process::Command};
 
-pub fn clone(url: &str) -> Result<(ExitStatus, PathBuf), OurError> {
+pub fn clone(url: &str) -> Result<PathBuf, OurError> {
     let package_name = get_name_from_url(url);
     let mut package_dir = get_our_dir()?;
 
@@ -14,9 +11,13 @@ pub fn clone(url: &str) -> Result<(ExitStatus, PathBuf), OurError> {
         .spawn()?
         .wait()?;
 
+    if !status.success() {
+        return Err(OurError::CloneFailed);
+    }
+
     package_dir.push(package_name);
 
-    Ok((status, package_dir))
+    Ok(package_dir)
 }
 
 fn get_name_from_url(url: &str) -> &str {

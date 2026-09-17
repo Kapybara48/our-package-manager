@@ -52,22 +52,10 @@ fn install(
 ) -> Result<(), error::OurError> {
     println!("installing {}", url);
 
-    let (status, package_dir) = git::clone(url)?;
-
-    if !status.success() {
-        println!("failed to clone");
-        return Ok(());
-    }
-
+    let package_dir = git::clone(url)?;
     println!("successfully cloned");
 
-    let status = build::build(&package_dir)?;
-
-    if !status.success() {
-        println!("failed to build");
-        return Ok(());
-    }
-
+    build::build(&package_dir)?;
     println!("successfully built");
 
     cargo::install_binary(&package_dir)?;
