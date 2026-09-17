@@ -1,5 +1,8 @@
 use serde::Deserialize;
 
+use crate::error::OurError;
+use std::path::Path;
+
 #[derive(Deserialize)]
 struct Config {
     package: Package,
@@ -42,4 +45,12 @@ struct Build {
 struct Install {
     binary_source: String,
     binary_destination: String,
+}
+
+pub fn load_config(path: &Path) -> Result<Config, OurError> {
+    let config_file = std::fs::read_to_string(path)?;
+
+    let config: Config = toml::from_str(&config_file)?;
+
+    Ok(config)
 }
