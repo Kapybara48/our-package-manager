@@ -52,7 +52,7 @@ fn install(
 ) -> Result<(), error::OurError> {
     println!("installing {}", url);
 
-    let package_dir = git::clone(url)?;
+    let package_dir = git::clone(url, branch, package_path)?;
     println!("successfully cloned");
 
     build::build(&package_dir)?;
