@@ -55,6 +55,11 @@ fn install(
     let package_dir = git::clone(url, branch, package_path)?;
     println!("successfully cloned");
 
+    match package_config::load_config(package_dir.as_path())? {
+        Some(config) => {}
+        None => {}
+    }
+
     build::build(&package_dir)?;
     println!("successfully built");
 

@@ -4,7 +4,7 @@ use crate::error::OurError;
 use std::path::Path;
 
 #[derive(Deserialize)]
-struct Config {
+pub struct Config {
     package: Package,
     version: Version,
     source: Source,
@@ -14,29 +14,29 @@ struct Config {
 }
 
 #[derive(Deserialize)]
-struct Package {
+pub struct Package {
     name: String,
     path: String,
 }
 
 #[derive(Deserialize)]
-struct Version {
+pub struct Version {
     commit: String,
 }
 
 #[derive(Deserialize)]
-struct Source {
+pub struct Source {
     url: String,
 }
 
 #[derive(Deserialize)]
-struct Git {
+pub struct Git {
     clone_depth: u32,
     branch: String,
 }
 
 #[derive(Deserialize)]
-struct Build {
+pub struct Build {
     command: String,
     args: Vec<String>,
 }
@@ -47,10 +47,17 @@ struct Install {
     binary_destination: String,
 }
 
-pub fn load_config(path: &Path) -> Result<Config, OurError> {
-    let config_file = std::fs::read_to_string(path)?;
+pub fn load_config(package_dir: &Path) -> Result<Option<Config>, OurError> {
+    let mut our_path = package_dir.to_path_buf();
+    our_path.push("our.toml");
+
+    if !our_path.exists() {
+        return Ok(None);
+    }
+
+    let config_file = std::fs::read_to_string(our_path)?;
 
     let config: Config = toml::from_str(&config_file)?;
 
-    Ok(config)
+    Ok(Some(config))
 }
