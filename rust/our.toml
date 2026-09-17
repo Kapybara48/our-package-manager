@@ -1,7 +1,6 @@
 [package]
 name = "our"
 path = "rust"
-version = "0.1.0"
 
 [source]
 url = "https://github.com/Kapybara48/our-package-manager.git"
