@@ -16,7 +16,14 @@ struct Args {
 
 #[derive(Subcommand)]
 enum Commands {
-    Install { url: String },
+    Install {
+        url: String,
+
+        #[arg(long)]
+        branch: Option<String>,
+        #[arg(short, long)]
+        package_path: Option<String>,
+    },
     Remove,
     Update,
 }
@@ -25,7 +32,11 @@ fn main() {
     let args = Args::parse();
 
     match args.command {
-        Commands::Install { url } => match install(&url) {
+        Commands::Install {
+            url,
+            branch,
+            package_path,
+        } => match install(&url, branch, package_path) {
             Ok(()) => println!("successfully installed"),
             Err(error) => println!("{}", error),
         },
@@ -34,7 +45,11 @@ fn main() {
     }
 }
 
-fn install(url: &str) -> Result<(), error::OurError> {
+fn install(
+    url: &str,
+    branch: Option<String>,
+    package_path: Option<String>,
+) -> Result<(), error::OurError> {
     println!("installing {}", url);
 
     let (status, package_dir) = git::clone(url)?;
