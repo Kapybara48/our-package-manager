@@ -6,6 +6,7 @@ mod error;
 mod git;
 mod package_config;
 mod paths;
+mod project;
 
 #[derive(Parser)]
 #[command()]
@@ -36,7 +37,7 @@ fn main() {
             url,
             branch,
             package_path,
-        } => match install(&url, branch, package_path) {
+        } => match install(url, branch, package_path) {
             Ok(()) => println!("successfully installed"),
             Err(error) => println!("{}", error),
         },
@@ -46,19 +47,29 @@ fn main() {
 }
 
 fn install(
-    url: &str,
+    url: String,
     branch: Option<String>,
     package_path: Option<String>,
 ) -> Result<(), error::OurError> {
     println!("installing {}", url);
 
-    let package_dir = git::clone(url, branch, package_path)?;
+    let package_info = package_config::PackageInfo {
+        name: git::get_name_from_url(&url).to_string(),
+        url,
+        branch,
+        path: package_path,
+    };
+
+    let package_dir = git::clone(&package_info)?;
     println!("successfully cloned");
 
-    match package_config::load_config(package_dir.as_path())? {
-        Some(config) => {}
-        None => {}
-    }
+    let config = match package_config::load_config(package_dir.as_path())? {
+        Some(config) => config,
+        None => {
+            let project_type = project::detect(&package_dir);
+            package_config::generate_config(project_type, package_info, &package_dir)?
+        }
+    };
 
     build::build(&package_dir)?;
     println!("successfully built");

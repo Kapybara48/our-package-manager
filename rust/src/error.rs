@@ -4,6 +4,7 @@ pub enum OurError {
     MissingHomeEnv,
     CloneFailed,
     BuildFailed,
+    UnknownProjectType,
     Io(std::io::Error),
     TomlParse(toml::de::Error),
 }
@@ -26,6 +27,7 @@ impl std::fmt::Display for OurError {
             OurError::MissingHomeEnv => write!(f, "Could not find your home directory"),
             OurError::CloneFailed => write!(f, "Failed to clone"),
             OurError::BuildFailed => write!(f, "Failed to build"),
+            OurError::UnknownProjectType => write!(f, "Project type is unknown"),
             OurError::Io(error) => write!(f, "I/O error: {}", error),
             OurError::TomlParse(error) => write!(f, "Error while parsing toml: {}", error),
         }

@@ -24,22 +24,29 @@ pub fn get_package_name(package_dir: &Path) -> Result<String, OurError> {
     Ok(config.package.name)
 }
 
-pub fn get_binary_path(package_dir: &Path) -> Result<PathBuf, OurError> {
+pub fn get_source_binary_path(package_dir: &Path) -> Result<PathBuf, OurError> {
     let package_name = get_package_name(package_dir)?;
-    let mut binary_path = package_dir.to_path_buf();
-    binary_path.push("target");
-    binary_path.push("debug");
-    binary_path.push(package_name);
+    let mut bin_path = package_dir.to_path_buf();
+    bin_path.push("target");
+    bin_path.push("debug");
+    bin_path.push(package_name);
 
-    Ok(binary_path)
+    Ok(bin_path)
+}
+
+pub fn get_destination_binary_path(package_dir: &Path) -> Result<PathBuf, OurError> {
+    let mut destination_bin_path = paths::get_bin_dir()?;
+    let package_name = get_package_name(package_dir)?;
+    destination_bin_path.push(package_name);
+
+    Ok(destination_bin_path)
 }
 
 pub fn install_binary(package_dir: &Path) -> Result<PathBuf, OurError> {
-    let binary_path = get_binary_path(package_dir)?;
-    let mut result_bin_path = paths::get_bin_dir()?;
-    result_bin_path.push(binary_path.file_name().unwrap());
+    let source_bin_path = get_source_binary_path(package_dir)?;
+    let destination_bin_path = get_destination_binary_path(package_dir)?;
 
-    std::fs::copy(binary_path, &result_bin_path)?;
+    std::fs::copy(source_bin_path, &destination_bin_path)?;
 
-    Ok(result_bin_path)
+    Ok(destination_bin_path)
 }
