@@ -46,7 +46,7 @@ pub fn install_binary(config: &package_config::Config) -> Result<PathBuf, OurErr
     let source_bin_path = &config.install.binary_source;
     let destination_bin_path = &config.install.binary_destination;
 
-    std::fs::copy(source_bin_path, &destination_bin_path)?;
+    std::fs::copy(source_bin_path, destination_bin_path)?;
 
     Ok(destination_bin_path.to_path_buf())
 }
