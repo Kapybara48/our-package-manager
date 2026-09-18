@@ -31,7 +31,7 @@ pub struct Source {
 
 #[derive(Deserialize)]
 pub struct Git {
-    clone_depth: u32,
+    clone_depth: Option<u32>,
     branch: Option<String>,
 }
 
@@ -86,7 +86,7 @@ pub fn generate_config(
             },
             git: Git {
                 branch: package_info.branch,
-                clone_depth: 1,
+                clone_depth: Some(1),
             },
             build: Build {
                 command: "cargo".to_string(),
