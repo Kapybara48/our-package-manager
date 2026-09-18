@@ -71,10 +71,12 @@ fn install(
         }
     };
 
-    build::build(&package_dir)?;
+    build::build(&package_dir, &config)?;
     println!("successfully built");
 
-    cargo::install_binary(&package_dir)?;
+    cargo::install_binary(&config)?;
+
+    paths::clear_temp_dir()?;
 
     Ok(())
 }

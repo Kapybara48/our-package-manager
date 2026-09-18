@@ -36,3 +36,14 @@ pub fn get_temp_dir() -> Result<PathBuf, OurError> {
 
     Ok(our_temp_dir)
 }
+
+pub fn clear_temp_dir() -> Result<(), OurError> {
+    let temp_dir = get_temp_dir()?;
+
+    for entry in std::fs::read_dir(&temp_dir)? {
+        let entry = entry?;
+        std::fs::remove_dir_all(entry.path())?;
+    }
+
+    Ok(())
+}

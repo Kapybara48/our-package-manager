@@ -9,8 +9,8 @@ pub struct Config {
     version: Option<Version>,
     source: Source,
     git: Git,
-    build: Build,
-    install: Install,
+    pub build: Build,
+    pub install: Install,
 }
 
 #[derive(Deserialize)]
@@ -37,14 +37,14 @@ pub struct Git {
 
 #[derive(Deserialize)]
 pub struct Build {
-    command: String,
-    args: Vec<String>,
+    pub command: String,
+    pub args: Vec<String>,
 }
 
 #[derive(Deserialize)]
-struct Install {
-    binary_source: PathBuf,
-    binary_destination: PathBuf,
+pub struct Install {
+    pub binary_source: PathBuf,
+    pub binary_destination: PathBuf,
 }
 
 pub struct PackageInfo {
