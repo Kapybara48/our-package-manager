@@ -1,0 +1,21 @@
+[package]
+name = "our"
+path = "rust"
+
+[version]
+commit = # "405cd40"
+
+[source]
+url = "https://github.com/Kapybara48/our-package-manager.git"
+
+[git]
+clone_depth = # 1
+branch = "main"
+
+[build]
+command = "cargo"
+args = ["build"]
+
+[install]
+binary_source = "target/debug/our"
+binary_destination = "~/.our/bin/our"
