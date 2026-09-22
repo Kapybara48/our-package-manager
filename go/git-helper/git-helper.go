@@ -73,6 +73,10 @@ func (g *GitRepository) FetchTags() error {
 	return nil
 }
 
+func (g *GitRepository) GetTags() error {
+	exitCode, err := execute.ExecuteGetOutput(g.Directory, "git", "tag", "-l", "--sort=-creatordate")
+}
+
 func (g *GitRepository) DeleteLocalClone() error {
 	err := os.RemoveAll(g.Directory)
 	if err != nil {
