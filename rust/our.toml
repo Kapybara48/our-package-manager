@@ -1,0 +1,17 @@
+[package]
+name = "our"
+path = "rust"
+
+[source]
+url = "https://github.com/Kapybara48/our-package-manager.git"
+
+[git]
+branch = "main"
+
+[build]
+command = "cargo"
+args = ["build"]
+
+[install]
+binary_source = "target/debug/our"
+binary_destination = "~/.our/bin/our"

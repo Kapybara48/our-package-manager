@@ -1,25 +1,38 @@
-use crate::{error::OurError, paths::get_our_dir};
-use std::{
-    path::PathBuf,
-    process::{Command, ExitStatus},
-};
+use crate::{error::OurError, package_config::PackageInfo, paths::get_temp_dir};
+use std::{path::PathBuf, process::Command};
 
-pub fn clone(url: &str) -> Result<(ExitStatus, PathBuf), OurError> {
-    let package_name = get_name_from_url(url);
-    let mut package_dir = get_our_dir()?;
+pub fn clone(package_info: &PackageInfo) -> Result<PathBuf, OurError> {
+    let temp_dir = get_temp_dir()?;
+
+    let mut args = vec!["clone".to_string(), "--depth".to_string(), "1".to_string()];
+
+    if let Some(branch) = &package_info.branch {
+        args.extend(["--branch".to_string(), branch.clone()]);
+    }
+
+    args.extend([package_info.url.clone(), package_info.name.clone()]);
 
     let status = Command::new("git")
-        .args(["clone", url, package_name])
-        .current_dir(&package_dir)
+        .args(args)
+        .current_dir(&temp_dir)
         .spawn()?
         .wait()?;
 
-    package_dir.push(package_name);
+    if !status.success() {
+        return Err(OurError::CloneFailed);
+    }
 
-    Ok((status, package_dir))
+    let mut package_dir = temp_dir;
+    package_dir.push(&package_info.name);
+
+    if let Some(package_path) = &package_info.path {
+        package_dir.push(package_path);
+    }
+
+    Ok(package_dir)
 }
 
-fn get_name_from_url(url: &str) -> &str {
+pub fn get_name_from_url(url: &str) -> &str {
     url.trim_end_matches(".git")
         .rsplit("/")
         .next()
