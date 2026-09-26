@@ -2,6 +2,8 @@
 
 use clap::{Parser, Subcommand};
 
+use crate::error::OurError;
+
 mod build;
 mod cargo;
 mod error;
@@ -27,8 +29,10 @@ enum Commands {
         #[arg(short, long)]
         package_path: Option<String>,
     },
+    Update{
+        package_name: String,
+    },
     Remove,
-    Update,
 }
 
 fn main() {
@@ -43,8 +47,11 @@ fn main() {
             Ok(()) => println!("successfully installed"),
             Err(error) => println!("{}", error),
         },
+        Commands::Update{ package_name} => match update(package_name) {
+            Ok(()) => println!("successfully updated"),
+            Err(error) => println!("{}", error),
+        },
         Commands::Remove => println!("removing"),
-        Commands::Update => println!("updating"),
     }
 }
 
@@ -82,5 +89,9 @@ fn install(
 
     paths::clear_temp_dir()?;
 
+    Ok(())
+}
+
+fn update(package_name: String) -> Result<(), OurError>{
     Ok(())
 }
