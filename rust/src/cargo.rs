@@ -42,11 +42,13 @@ pub fn get_destination_binary_path(package_dir: &Path) -> Result<PathBuf, OurErr
     Ok(destination_bin_path)
 }
 
-pub fn install_binary(config: &package_config::Config) -> Result<PathBuf, OurError> {
-    let source_bin_path = &config.install.binary_source;
-    let destination_bin_path = &config.install.binary_destination;
+pub fn install_binary(package_dir: &Path, config: &package_config::Config) -> Result<PathBuf, OurError> {
+    let mut source_bin_path = package_dir.to_path_buf();
+    source_bin_path.push(&config.install.binary_source);
+    let destination_bin_path = paths::resolve_path(&config.install.binary_destination)?;
 
-    std::fs::copy(source_bin_path, destination_bin_path)?;
+
+    std::fs::copy(source_bin_path, &destination_bin_path)?;
 
     Ok(destination_bin_path.to_path_buf())
 }

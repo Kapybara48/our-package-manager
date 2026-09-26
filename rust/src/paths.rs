@@ -1,16 +1,20 @@
 use crate::error::OurError;
 use std::fs::create_dir_all;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
-pub fn get_our_dir() -> Result<PathBuf, OurError> {
+pub fn get_home_dir() -> Result<PathBuf, OurError>{
     match std::env::home_dir() {
-        Some(mut path) => {
-            path.push(".our");
-            create_dir_all(&path)?;
-            Ok(path)
-        }
+        Some(home) => Ok(home),
         None => Err(OurError::MissingHomeEnv),
     }
+}
+
+pub fn get_our_dir() -> Result<PathBuf, OurError> {
+    let mut our_dir = get_home_dir()?;
+    our_dir.push(".our");
+    create_dir_all(&our_dir)?;
+
+    Ok(our_dir)
 }
 
 pub fn get_bin_dir() -> Result<PathBuf, OurError> {
@@ -46,4 +50,16 @@ pub fn clear_temp_dir() -> Result<(), OurError> {
     }
 
     Ok(())
+}
+
+pub fn resolve_path(path: &Path) -> Result<PathBuf, OurError>{
+    if path.starts_with("~"){
+        let mut home = get_home_dir()?;
+        let relative = path.strip_prefix("~").unwrap();
+        home.push(relative);
+
+        Ok(home)
+    }else{
+        Ok(path.to_path_buf())
+    }
 }

@@ -1,9 +1,9 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-use crate::{cargo, error::OurError, project::ProjectType};
+use crate::{cargo, error::OurError, paths, project::ProjectType};
 use std::path::{Path, PathBuf};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Config {
     package: Package,
     version: Option<Version>,
@@ -13,35 +13,35 @@ pub struct Config {
     pub install: Install,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Package {
     name: String,
     path: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Version {
     commit: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Source {
     url: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Git {
     clone_depth: Option<u32>,
     branch: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Build {
     pub command: String,
     pub args: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Install {
     pub binary_source: PathBuf,
     pub binary_destination: PathBuf,
@@ -67,6 +67,18 @@ pub fn load_config(package_dir: &Path) -> Result<Option<Config>, OurError> {
     let config: Config = toml::from_str(&config_file)?;
 
     Ok(Some(config))
+}
+
+pub fn save_config(config: &Config) -> Result<PathBuf, OurError>{
+    let config_file = toml::to_string(config)?;
+
+    let mut saved_location = paths::get_packages_dir()?;
+    saved_location.push(&config.package.name);
+    saved_location.set_extension("toml");
+
+    std::fs::write(&saved_location, config_file)?;
+
+    Ok(saved_location)
 }
 
 pub fn generate_config(

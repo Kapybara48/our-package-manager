@@ -6,7 +6,8 @@ pub enum OurError {
     BuildFailed,
     UnknownProjectType,
     Io(std::io::Error),
-    TomlParse(toml::de::Error),
+    TomlDeserialize(toml::de::Error),
+    TomlSerialize(toml::ser::Error),
 }
 
 impl From<std::io::Error> for OurError {
@@ -17,7 +18,13 @@ impl From<std::io::Error> for OurError {
 
 impl From<toml::de::Error> for OurError {
     fn from(error: toml::de::Error) -> Self {
-        OurError::TomlParse(error)
+        OurError::TomlDeserialize(error)
+    }
+}
+
+impl From<toml::ser::Error> for OurError {
+    fn from(error: toml::ser::Error) -> Self{
+        OurError::TomlSerialize(error)
     }
 }
 
@@ -29,7 +36,8 @@ impl std::fmt::Display for OurError {
             OurError::BuildFailed => write!(f, "Failed to build"),
             OurError::UnknownProjectType => write!(f, "Project type is unknown"),
             OurError::Io(error) => write!(f, "I/O error: {}", error),
-            OurError::TomlParse(error) => write!(f, "Error while parsing toml: {}", error),
+            OurError::TomlDeserialize(error) => write!(f, "Error while parsing toml: {}", error),
+            OurError::TomlSerialize(error) => write!(f, "Error while serializing toml: {}", error),
         }
     }
 }
