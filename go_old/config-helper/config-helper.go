@@ -10,6 +10,7 @@ import (
 
 type AppConfig struct {
 	DefaultPackageConfig PackageConfig
+	ConfigDirectory      string
 }
 
 type PackageConfig struct {

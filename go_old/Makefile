@@ -1,10 +1,6 @@
 
-PREFIX := /usr/local
-BINDIR := $(PREFIX)/bin
-LIBDIR := $(PREFIX)/lib
-SHRDIR := $(PREFIX)/share
-DOCDIR := $(PREFIX)/share/doc
-MANDIR := $(PREFIX)/share/man
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/sbin
 
 
 build:
