@@ -47,7 +47,7 @@ func Execute(cmd exec.Cmd, getOutput bool, writeOutputToStd bool) (string, int, 
 
 	err = cmd.Wait()
 	if err != nil {
-		return "", 0, nil
+		return "", cmd.ProcessState.ExitCode(), err
 	}
 
 	err = <-stderrErr
@@ -82,6 +82,6 @@ func outputToStdAndString(pipe io.ReadCloser, getOutput bool, writeOutputToStd b
 			strBuilder.WriteString("\n")
 		}
 	}
-	output <- strBuilder.String()
 	errorChannel <- nil
+	output <- strBuilder.String()
 }

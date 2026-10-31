@@ -29,7 +29,7 @@ func NewGitRepository(url string) *GitRepository {
 }
 
 func (g *GitRepository) Clone(depth int, branch string) error {
-	var args []string
+	var args []string = []string{"git"}
 
 	args = append(args, "clone", g.URL, g.Directory)
 
@@ -41,7 +41,7 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 		args = append(args, "--branch", branch)
 	}
 
-	_, exitCode, err := execute.Execute(exec.Cmd{Args: args, Path: "git"}, false, true)
+	_, exitCode, err := execute.Execute(exec.Cmd{Args: args, Path: "git"}, false, false)
 	if err != nil {
 		return fmt.Errorf("error cloning git repository %s", err)
 	}
@@ -53,7 +53,7 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 }
 
 func (g *GitRepository) SwitchBranch(branch string) error {
-	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"switch", branch}}, false, true)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "switch", "--detach", branch}}, false, false)
 	if err != nil {
 		return fmt.Errorf("error switching branch %s", err)
 	}
@@ -64,7 +64,7 @@ func (g *GitRepository) SwitchBranch(branch string) error {
 }
 
 func (g *GitRepository) FetchTags() error {
-	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"fetch", "--tags"}}, false, false)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--tags"}}, false, false)
 	if err != nil {
 		return fmt.Errorf("error fetching tags %s", err)
 	}
@@ -74,18 +74,20 @@ func (g *GitRepository) FetchTags() error {
 	return nil
 }
 
-func (g *GitRepository) GetTags() (error, []string) {
+// GetTags() returns slice of strings containing repository tags sorted from latest to oldest
+func (g *GitRepository) GetTags() ([]string, error) {
 	tags := []string{}
-	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"tag", "-l", "--sort=-creatordate"}}, true, false)
+	output, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "tag", "-l", "--sort=-creatordate"}}, true, false)
 	if exitCode != 0 {
-		return fmt.Errorf("error geting tags: git fetch exited with %d", exitCode), tags
+		return tags, fmt.Errorf("error geting tags: git fetch exited with %d", exitCode)
 	}
 
 	if err != nil {
-		return fmt.Errorf("error geting tags: %w", err), tags
+		return tags, fmt.Errorf("error geting tags: %w", err)
 	}
+	tags = strings.Split(output, "\n")
 
-	return nil, tags
+	return tags, nil
 }
 
 func (g *GitRepository) DeleteLocalClone() error {
