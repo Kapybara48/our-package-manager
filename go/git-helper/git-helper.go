@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"our-package-manager/execute"
+	"our/execute"
 )
 
 type GitRepository struct {
@@ -40,7 +41,7 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 		args = append(args, "--branch", branch)
 	}
 
-	exitCode, err := execute.ExecuteWithOutput(".", "git", args...)
+	_, exitCode, err := execute.Execute(exec.Cmd{Args: args, Path: "git"}, false, true)
 	if err != nil {
 		return fmt.Errorf("error cloning git repository %s", err)
 	}
@@ -52,7 +53,7 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 }
 
 func (g *GitRepository) SwitchBranch(branch string) error {
-	exitCode, err := execute.ExecuteWithOutput(g.Directory, "git", "switch", branch)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"switch", branch}}, false, true)
 	if err != nil {
 		return fmt.Errorf("error switching branch %s", err)
 	}
@@ -63,7 +64,7 @@ func (g *GitRepository) SwitchBranch(branch string) error {
 }
 
 func (g *GitRepository) FetchTags() error {
-	exitCode, err := execute.ExecuteWithOutput(g.Directory, "git", "fetch", "--tags")
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"fetch", "--tags"}}, false, false)
 	if err != nil {
 		return fmt.Errorf("error fetching tags %s", err)
 	}
@@ -73,11 +74,18 @@ func (g *GitRepository) FetchTags() error {
 	return nil
 }
 
-func (g *GitRepository) GetTags() error {
-	exitCode, err, _ := execute.ExecuteGetOutput(g.Directory, "git", "tag", "-l", "--sort=-creatordate")
-	println(exitCode)
-	print(err)
-	return nil
+func (g *GitRepository) GetTags() (error, []string) {
+	tags := []string{}
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"tag", "-l", "--sort=-creatordate"}}, true, false)
+	if exitCode != 0 {
+		return fmt.Errorf("error geting tags: git fetch exited with %d", exitCode), tags
+	}
+
+	if err != nil {
+		return fmt.Errorf("error geting tags: %w", err), tags
+	}
+
+	return nil, tags
 }
 
 func (g *GitRepository) DeleteLocalClone() error {

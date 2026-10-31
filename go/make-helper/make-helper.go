@@ -5,10 +5,11 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 
-	"our-package-manager/execute"
+	"our/execute"
 )
 
 // Receives directory of the project and executes target like "build" or "install".
@@ -21,7 +22,7 @@ func MakeTarget(directory string, makefile string, target string) error {
 }
 
 func execMake(args ...string) error {
-	exitCode, err := execute.ExecuteWithOutput("./", "make", args...)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: "./", Path: "make", Args: args}, false, true)
 	if err != nil {
 		return err
 	}
