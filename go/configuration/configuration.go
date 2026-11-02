@@ -14,6 +14,7 @@ type PackageConfig struct {
 	Name             string   `toml:"Name"`
 	GitUrl           string   `toml:"GitUrl"`
 	PackageSubfolder string   `toml:"PackageSubfolder"`
+	Branch           string   `toml:"Branch"`
 	InstallScript    string   `toml:"InstallScript"`
 	ReleaseTagRegex  string   `toml:"ReleaseTagRegex"`
 	PackageFolders   []string `toml:"PackageFolders"`

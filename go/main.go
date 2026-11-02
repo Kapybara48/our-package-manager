@@ -56,34 +56,61 @@ func main() {
 			log.Printf("error loading packages states: %s\n", err)
 			return
 		}
+
+	packageLoop:
 		for _, v := range configuration.OurConfigLoaded.PackageConfigs {
 			fmt.Printf(color.YellowString("Checking package %s\n"), v.Name)
 
 			gitRepo := githelper.NewGitRepository(v.GitUrl)
 
-			fmt.Println("Cloning repository")
-			err := gitRepo.Clone(0, "")
+			fmt.Println(color.HiMagentaString("Cloning repository"))
+			latestVersionTag := ""
+
+			err := gitRepo.Clone(1, "")
 			defer gitRepo.DeleteLocalClone()
 			if err != nil {
 				fmt.Printf(color.RedString("Failed to clone repository: %s\n"), err)
 				continue
 			}
+
 			// err = gitRepo.FetchTags()
 			// if err != nil {
 			// 	fmt.Printf("Failed to fetch tags: %s\n", err)
 			// 	continue
 			// }
 
-			tags, err := gitRepo.GetTags()
-			if err != nil {
-				fmt.Printf(color.RedString("Unable to get tags: %s\n"), err)
-				continue
-			}
+			lastRepoDepth := 1
 
-			latestVersionTag := v.GetCompatibleTag(tags)
-			if latestVersionTag == "" {
-				fmt.Print(color.RedString("Git repository does not have tag matching selected regex\n"))
-				continue
+			for latestVersionTag == "" {
+				fmt.Println(color.HiMagentaString("Deepening repository by 30 commits"))
+
+				err := gitRepo.Deepen(30)
+				if err != nil {
+					fmt.Printf(color.RedString("Failed to deepen repository: %s\n"), err)
+					continue packageLoop
+				}
+
+				repoDepth, err := gitRepo.CountCommits()
+				if err != nil {
+					fmt.Printf(color.RedString("Faled to get commit count of repo: %s"), err)
+				}
+
+				if repoDepth == lastRepoDepth {
+					fmt.Println(color.RedString("Git repository does not have tag matching selected regex"))
+					continue packageLoop
+				}
+				lastRepoDepth = repoDepth
+
+				tags, err := gitRepo.GetTags()
+				if err != nil {
+					fmt.Printf(color.RedString("Unable to get tags: %s\n"), err)
+					continue packageLoop
+				}
+
+				latestVersionTag = v.GetCompatibleTag(tags)
+				if latestVersionTag == "" {
+					fmt.Println(color.HiMagentaString("Git repository does not have tag matching selected regex (in current depth)"))
+				}
 			}
 
 			installedVersion := configuration.GetPackageState(v.Name).InstalledVersion
@@ -97,14 +124,14 @@ func main() {
 				fmt.Printf(color.GreenString("Updating to: %s\n"), latestVersionTag)
 			}
 
-			fmt.Printf("Switching branch to latest tag\n")
+			fmt.Print(color.HiMagentaString("Switching branch to latest tag\n"))
 			err = gitRepo.SwitchBranch(latestVersionTag)
 			if err != nil {
 				fmt.Print(color.RedString("problem with switching to latest release tag\n"))
 				continue
 			}
 
-			fmt.Println("Executing installation script")
+			fmt.Println(color.HiMagentaString("Executing installation script"))
 			_, exitCode, err := execute.Execute(exec.Cmd{Dir: filepath.Join(gitRepo.Directory, v.PackageSubfolder), Path: v.GetFullPathInstallScript(gitRepo.Directory)}, false, *debug)
 			if err != nil || exitCode != 0 {
 				fmt.Printf(color.RedString("error runing install script exitcode:%d  error: %s\n"), exitCode, err)
@@ -120,5 +147,4 @@ func main() {
 	// 	log.Fatalf("Failed to execute make target: %s", err)
 	// }
 
-	fmt.Println("Installation completed successfully.")
 }

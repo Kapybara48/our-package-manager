@@ -52,6 +52,29 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 	return nil
 }
 
+func (g *GitRepository) Deepen(depth int) error {
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--deepen", strconv.FormatInt(int64(depth), 10)}}, false, false)
+	if err != nil {
+		return fmt.Errorf("error fetching more commits %s", err)
+	}
+	if exitCode != 0 {
+		return fmt.Errorf("fetching more commits returned exit code %d", exitCode)
+	}
+	return nil
+}
+
+func (g *GitRepository) CountCommits() (int, error) {
+	log, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "log", "--oneline"}}, true, false)
+	if err != nil {
+		return 0, fmt.Errorf("error listing log %s", err)
+	}
+	if exitCode != 0 {
+		return 0, fmt.Errorf("git log ended with exit code %d", exitCode)
+	}
+
+	return strings.Count(log, "\n"), nil
+}
+
 func (g *GitRepository) SwitchBranch(branch string) error {
 	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "switch", "--detach", branch}}, false, false)
 	if err != nil {

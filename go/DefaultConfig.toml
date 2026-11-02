@@ -13,3 +13,11 @@ Name = "port-info"
 GitUrl = "https://github.com/bedrixh/port-info-golang.git"
 InstallScript = "./install_script.sh"
 ReleaseTagRegex = '^v\d+(?:\.\d+){0,2}$'
+
+[[Package]]
+Name = "ssl-manager2"
+GitUrl = "https://github.com/bedrixh/ssl-manager.git"
+PackageSubfolder = ""
+InstallScript = "./install_script.sh"
+ReleaseTagRegex = '^vv\d+(?:\.\d+){0,2}$'
+PackageFolders = ["/etc/ssl-manager"]
