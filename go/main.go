@@ -6,6 +6,7 @@ import (
 	"log"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 
 	// "path/filepath"
 
@@ -19,10 +20,11 @@ import (
 
 func main() {
 	apply := flag.Bool("apply", false, "Applys config file")
-	add := flag.Bool("add", false, "Add package")
+	applyLimit := flag.String("applyLimit", ".*", "Limit on apply, regex format")
 
 	configPath := flag.String("config", "", "Path of configuration file")
 
+	add := flag.Bool("add", false, "Add package")
 	debug := flag.Bool("debug", false, "Turns on debug mode")
 	repoURL := flag.String("git", "", "URL of the Git repository")
 	packageName := flag.String("name", "", "Package name")
@@ -57,8 +59,12 @@ func main() {
 			return
 		}
 
+		limitRegex := regexp.MustCompile(*applyLimit)
 	packageLoop:
 		for _, v := range configuration.OurConfigLoaded.PackageConfigs {
+			if limitRegex.MatchString(v.Name) == false {
+				continue packageLoop
+			}
 			fmt.Printf(color.YellowString("Checking package %s\n"), v.Name)
 
 			gitRepo := githelper.NewGitRepository(v.GitUrl)

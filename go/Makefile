@@ -1,6 +1,6 @@
 
 PREFIX ?= /usr/local
-BINDIR ?= $(PREFIX)/sbin
+BINDIR ?= $(PREFIX)/bin
 
 
 build:

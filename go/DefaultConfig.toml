@@ -1,7 +1,7 @@
 DefaultInstallScript = "./install_script.sh"
 
 [[Package]]
-Name = "ssl-manager1"
+Name = "ssl-manager"
 GitUrl = "https://github.com/bedrixh/ssl-manager.git"
 PackageSubfolder = ""
 InstallScript = "./install_script.sh"
@@ -15,9 +15,8 @@ InstallScript = "./install_script.sh"
 ReleaseTagRegex = '^v\d+(?:\.\d+){0,2}$'
 
 [[Package]]
-Name = "ssl-manager2"
-GitUrl = "https://github.com/bedrixh/ssl-manager.git"
+Name = "Allacritty"
+GitUrl = "https://github.com/alacritty/alacritty.git"
 PackageSubfolder = ""
 InstallScript = "./install_script.sh"
-ReleaseTagRegex = '^vv\d+(?:\.\d+){0,2}$'
-PackageFolders = ["/etc/ssl-manager"]
+ReleaseTagRegex = '^v\d+(?:\.\d+){0,2}$'

@@ -53,7 +53,7 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 }
 
 func (g *GitRepository) Deepen(depth int) error {
-	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--deepen", strconv.FormatInt(int64(depth), 10)}}, false, false)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--tags", "--deepen", strconv.FormatInt(int64(depth), 10)}}, false, false)
 	if err != nil {
 		return fmt.Errorf("error fetching more commits %s", err)
 	}
