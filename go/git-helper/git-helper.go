@@ -53,7 +53,7 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 }
 
 func (g *GitRepository) Deepen(depth int) error {
-	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--tags", "--deepen", strconv.FormatInt(int64(depth), 10)}}, false, false)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--deepen", strconv.FormatInt(int64(depth), 10)}}, false, false)
 	if err != nil {
 		return fmt.Errorf("error fetching more commits %s", err)
 	}
@@ -76,7 +76,7 @@ func (g *GitRepository) CountCommits() (int, error) {
 }
 
 func (g *GitRepository) SwitchBranch(branch string) error {
-	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "switch", "--detach", branch}}, false, false)
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "switch", "--detach", branch, "--force"}}, false, false)
 	if err != nil {
 		return fmt.Errorf("error switching branch %s", err)
 	}
@@ -102,7 +102,7 @@ func (g *GitRepository) GetTags() ([]string, error) {
 	tags := []string{}
 	output, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "tag", "-l", "--sort=-creatordate"}}, true, false)
 	if exitCode != 0 {
-		return tags, fmt.Errorf("error geting tags: git fetch exited with %d", exitCode)
+		return tags, fmt.Errorf("error geting tags exit code: %d", exitCode)
 	}
 
 	if err != nil {
@@ -111,6 +111,45 @@ func (g *GitRepository) GetTags() ([]string, error) {
 	tags = strings.Split(output, "\n")
 
 	return tags, nil
+}
+
+func (g *GitRepository) GetRemoteTags() ([]string, error) {
+	tags := []string{}
+	output, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "ls-remote", "--tags", "--refs", "--sort=-version:refname", "origin"}}, true, false)
+	if exitCode != 0 {
+		return tags, fmt.Errorf("error geting tags exit code: %d", exitCode)
+	}
+
+	if err != nil {
+		return tags, fmt.Errorf("error geting tags: %w", err)
+	}
+
+	tagLines := strings.Split(output, "\n")
+
+	for _, v := range tagLines {
+		if splited := strings.Split(v, "\t"); len(splited) > 1 {
+			tagName, found := strings.CutPrefix(splited[1], "refs/tags/")
+			if !found {
+				continue
+			}
+			tags = append(tags, tagName)
+		}
+	}
+
+	return tags, nil
+}
+
+func (g *GitRepository) FetchTag(tag string) error {
+	_, exitCode, err := execute.Execute(exec.Cmd{Dir: g.Directory, Path: "git", Args: []string{"git", "fetch", "--depth=1", "origin", "tag", tag}}, false, false)
+	if exitCode != 0 {
+		return fmt.Errorf("error fetching tags exit code: %d", exitCode)
+	}
+
+	if err != nil {
+		return fmt.Errorf("error fetching tags: %w", err)
+	}
+
+	return nil
 }
 
 func (g *GitRepository) DeleteLocalClone() error {
