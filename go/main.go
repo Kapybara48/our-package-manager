@@ -177,6 +177,7 @@ packageLoop:
 			fmt.Printf(color.RedString("error runing install script exitcode:%d  error: %s\n"), exitCode, err)
 			continue
 		}
+		fmt.Printf(color.GreenString("Sucessfully installed %s version: %s\n"), v.Name, latestVersionTag)
 
 		configuration.SetPackageState(v.Name, configuration.PackageState{InstalledVersion: latestVersionTag, Name: v.Name})
 	}
