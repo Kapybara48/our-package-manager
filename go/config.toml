@@ -1,5 +1,5 @@
 [[Package]]
-Name = "ssl-manager"
+Name = "our"
 GitUrl = "https://github.com/Kapybara48/our-package-manager.git"
 PackageSubfolder = "go"
 InstallScript = "make_install.sh"
