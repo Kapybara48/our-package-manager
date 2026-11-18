@@ -19,6 +19,11 @@ build:
 install: build
 	@echo Installing built package
 	install -m 755 bin/${BIN_NAME} ${DESTDIR}${PREFIX}/bin/$(BIN_NAME)
+	install -d ${DESTDIR}/etc/${BIN_NAME}/scripts
+	install -m 755 scripts/* ${DESTDIR}/etc/${BIN_NAME}/scripts
+	@if [ ! -e "$(DESTDIR)/etc/${BIN_NAME}/config.toml" ]; then \
+		install -D -m 644 config.toml "$(DESTDIR)/etc/our/config.toml"; \
+	fi
 
 uninstall: 
 	@echo Removing binaries

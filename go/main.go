@@ -32,7 +32,7 @@ var (
 	argHelpPtr   = flag.Bool("help", false, "Help, shows this help message")
 	argForcePrt  = flag.Bool("force", false, "Force")
 	argDebugPtr  = flag.Bool("debug", false, "Turns on debug mode")
-	argConfigPtr = flag.String("config", "/etc/our/config.yml", "Path of configuration file")
+	argConfigPtr = flag.String("config", "/etc/our/config.toml", "Path of configuration file")
 	argLimitPtr  = flag.String("limit", ".*", "Regex to limit packages by name")
 
 	argRepoURLPtr     = flag.String("git", "", "URL of the Git repository")

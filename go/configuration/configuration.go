@@ -158,18 +158,13 @@ func (c *PackageConfig) GetCompatibleTag(tags []string) string {
 }
 
 func (c *PackageConfig) GetFullPathInstallScript(gitRepoPath string) string {
-	installScriptFullPath := c.InstallScript
-	if !strings.HasPrefix(installScriptFullPath, "/") {
-		if after, found := strings.CutPrefix(installScriptFullPath, "git:"); found == true {
-			installScriptFullPath = filepath.Join(gitRepoPath, after)
-		} else {
-			wd, err := os.Getwd()
-			if err != nil {
-				return ""
-			}
-			installScriptFullPath = filepath.Join(wd, installScriptFullPath)
-		}
+	if after, found := strings.CutPrefix(c.InstallScript, "git:"); found == true {
+		return filepath.Join(gitRepoPath, after)
 	}
 
-	return installScriptFullPath
+	if strings.HasPrefix(c.InstallScript, "/") {
+		return c.InstallScript
+	}
+
+	return filepath.Join("/etc/our/scripts/", c.InstallScript)
 }
