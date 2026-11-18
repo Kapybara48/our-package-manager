@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/muesli/go-app-paths"
+	gap "github.com/muesli/go-app-paths"
 )
 
 type PackageConfig struct {
