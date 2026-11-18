@@ -25,15 +25,14 @@ install: build
 		install -D -m 644 config.toml "$(DESTDIR)/etc/our/config.toml"; \
 	fi
 
-uninstall: 
+uninstall:
 	@echo Removing binaries
 	${RM} ${DESTDIR}${PREFIX}/bin/$(BIN_NAME)
 
 clean:
 	@echo Cleaning build targets
-	${RM} bin/$(BIN_NAME) 
+	${RM} bin/$(BIN_NAME)
 
 run: build
 	@echo Executing binary
 	bin/$(BIN_NAME)
-

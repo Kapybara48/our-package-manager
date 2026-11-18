@@ -60,7 +60,10 @@ func (c *AppConfig) WriteConfig() error {
 	if err != nil {
 		return err
 	}
-	os.WriteFile(ourConfigLoadedPath, configBytes, 0644)
+	err = os.WriteFile(ourConfigLoadedPath, configBytes, 0644)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
