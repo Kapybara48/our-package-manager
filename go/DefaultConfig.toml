@@ -1,22 +1,6 @@
-DefaultInstallScript = "./install_script.sh"
-
 [[Package]]
 Name = "ssl-manager"
-GitUrl = "https://github.com/bedrixh/ssl-manager.git"
-PackageSubfolder = ""
-InstallScript = "./install_script.sh"
-ReleaseTagRegex = '^v\d+(?:\.\d+){0,2}$'
-PackageFolders = ["/etc/ssl-manager"]
-
-[[Package]]
-Name = "port-info"
-GitUrl = "https://github.com/bedrixh/port-info-golang.git"
-InstallScript = "./install_script.sh"
-ReleaseTagRegex = '^v\d+(?:\.\d+){0,2}$'
-
-[[Package]]
-Name = "Alacritty"
-GitUrl = "https://github.com/alacritty/alacritty.git"
-PackageSubfolder = ""
-InstallScript = "./install_script.sh"
+GitUrl = "https://github.com/Kapybara48/our-package-manager.git"
+PackageSubfolder = "go"
+InstallScript = "make_install.sh"
 ReleaseTagRegex = '^v\d+(?:\.\d+){0,2}$'
