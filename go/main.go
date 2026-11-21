@@ -198,9 +198,15 @@ func cliAdd() error {
 }
 
 func cliUsage() error {
-	fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [subcommand] [flags]\n\n", color.HiBlueString(os.Args[0]))
-
-	fmt.Fprintln(flag.CommandLine.Output(), "Subcommands:")
+	_, err := fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [subcommand] [flags]\n\n", color.HiBlueString(os.Args[0]))
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(flag.CommandLine.Output(), "Subcommands:")
+	if err != nil {
+		return err
+	}
+	er
 	for i, subcommand := range subcommandOptions {
 		fmt.Fprintf(flag.CommandLine.Output(), "  %s\n\t%s\n", color.HiGreenString(i), color.RedString(subcommand.helpMessage))
 	}

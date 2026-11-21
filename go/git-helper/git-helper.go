@@ -29,7 +29,7 @@ func NewGitRepository(url string) *GitRepository {
 }
 
 func (g *GitRepository) Clone(depth int, branch string) error {
-	var args []string = []string{"git"}
+	var args = []string{"git"}
 
 	args = append(args, "clone", g.URL, g.Directory)
 
