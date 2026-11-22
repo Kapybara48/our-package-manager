@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cargo install --path . --root /usr/local/bin
+cargo install --path . --root /usr/local/
 exit $?
