@@ -206,7 +206,6 @@ func cliUsage() error {
 	if err != nil {
 		return err
 	}
-	er
 	for i, subcommand := range subcommandOptions {
 		fmt.Fprintf(flag.CommandLine.Output(), "  %s\n\t%s\n", color.HiGreenString(i), color.RedString(subcommand.helpMessage))
 	}
