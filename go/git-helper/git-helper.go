@@ -28,7 +28,7 @@ func NewGitRepository(url string) *GitRepository {
 	return &git
 }
 
-func (g *GitRepository) Clone(depth int, branch string) error {
+func (g *GitRepository) Clone(depth int, branch string, recursive bool) error {
 	var args = []string{"git"}
 
 	args = append(args, "clone", g.URL, g.Directory)
@@ -39,6 +39,10 @@ func (g *GitRepository) Clone(depth int, branch string) error {
 
 	if branch != "" {
 		args = append(args, "--branch", branch)
+	}
+
+	if recursive == true {
+		args = append(args, "--recursive")
 	}
 
 	_, exitCode, err := execute.Execute(exec.Cmd{Args: args, Path: "git"}, false, false)

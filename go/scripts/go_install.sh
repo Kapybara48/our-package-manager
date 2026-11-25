@@ -1,6 +1,6 @@
 #!/bin/bash
 
-go install .
+GOROOT=/usr/local/ go install .
 
 exit "$?"
 

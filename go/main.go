@@ -53,7 +53,7 @@ var (
 			function:    cliAdd,
 			loadConfig:  true,
 		},
-		"update": {
+		"update-all": {
 			helpMessage: "Updates all packages and installs new from configuration file",
 			function:    cliUpdate,
 			loadConfig:  true,
@@ -172,7 +172,7 @@ packageLoop:
 		}
 
 		fmt.Println(color.HiMagentaString("Executing installation script"))
-		_, exitCode, err := execute.Execute(exec.Cmd{Dir: filepath.Join(gitRepo.Directory, v.PackageSubfolder), Path: v.GetFullPathInstallScript(gitRepo.Directory)}, false, *argDebugPtr)
+		_, exitCode, err := execute.Execute(exec.Cmd{Dir: filepath.Join(gitRepo.Directory, v.PackageSubfolder), Path: v.GetFullPathInstallScript(gitRepo.Directory), Env: []string{"Name=" + v.Name, "version=" + latestVersionTag}}, false, *argDebugPtr)
 		if err != nil || exitCode != 0 {
 			fmt.Printf(color.RedString("error runing install script exitcode:%d  error: %s\n"), exitCode, err)
 			continue
