@@ -128,7 +128,7 @@ packageLoop:
 
 		fmt.Println(color.HiMagentaString("Cloning repository"))
 
-		err := gitRepo.Clone(1, "")
+		err := gitRepo.Clone(1, "", true)
 		defer gitRepo.DeleteLocalClone()
 		if err != nil {
 			fmt.Printf(color.RedString("Failed to clone repository: %s\n"), err)
